@@ -40,7 +40,7 @@ public class MainActivity extends Activity {
                     long id) {
                 
                 String item = "selected";
-                
+                //Toast a message box in Android that appears at the bottom of the screen usually in black.
                 Toast.makeText(getApplicationContext(), item, Toast.LENGTH_LONG).show();
                 
             }
