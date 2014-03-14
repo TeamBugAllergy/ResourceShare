@@ -1,4 +1,5 @@
 ResourceShare
 =============
 
-Resource Share App by Team BugAllery. Final year project code.
+Resource Share App by Team BugAllery. 
++Final year project code.
