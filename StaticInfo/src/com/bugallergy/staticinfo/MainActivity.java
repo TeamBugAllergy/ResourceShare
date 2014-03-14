@@ -14,13 +14,14 @@ public class MainActivity extends Activity {
 		TextView textView = (TextView) findViewById(R.id.textview);
 
 		String PhoneModel = android.os.Build.MODEL;
-		textView.setText("Model: "+PhoneModel);
+		textView.setText("Model: " + PhoneModel);
 		String AndroidVersion = android.os.Build.VERSION.RELEASE;
-		textView.setText("Android Version: "+AndroidVersion);
+		textView.append("\nAndroid Version: " +AndroidVersion);
 		String AndroidBrand = android.os.Build.BRAND;
-		textView.setText("Brand: "+AndroidBrand);
-		String AndroidHardware = android.os.Build.HARDWARE;
-		textView.setText("Hardware Profile: ");
+		textView.append("\nBrand: " +AndroidBrand);
+		String androidHardware = android.os.Build.HARDWARE;
+		textView.append("\nHardware Profile: " + androidHardware);
+		
 
 		
 		
