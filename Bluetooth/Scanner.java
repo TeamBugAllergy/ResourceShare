@@ -17,7 +17,7 @@ public class Scanner {
 	 */
 	private static int DEVICE_LIST = 1;
 	/**
-	 * Maximum of 20 devices can be stored in the device_list[].
+	 * Maximum of 20 devices can be stored in the device_list[ ].
 	 */
 	private final int MAX_DEVICES = 20;
 
