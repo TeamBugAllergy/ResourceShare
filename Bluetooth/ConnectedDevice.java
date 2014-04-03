@@ -1,14 +1,28 @@
-package com.teambugallergy.bluetooth;
+package com.bugallergy.teambugallergy;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.os.Handler;
 import android.util.Log;
 
-public class RemoteDevice {
-
+/**
+ * This class has all the methods required for initializing streams,reading and wrinting of data.
+ * <i>
+ * <br/>--------------------------------------
+ * <br/>Constants of this class starts with 6 
+ * <br/>--------------------------------------
+ * <br/>
+ * </i>
+ * 
+ * 02-04-2014
+ * @author Adiga
+ */
+public class ConnectedDevice {
+	
 	/**
 	 * Device to be connected to.
 	 */
@@ -19,7 +33,12 @@ public class RemoteDevice {
 	 * RemoteDevice.
 	 */
 	private BluetoothSocket socket = null;
-
+	
+	/** Handler of caller class
+	 * 
+	 */
+	private static Handler callerHandler;
+	
 	/**
 	 * InputStream used to read the data from socket connection
 	 */
@@ -29,88 +48,37 @@ public class RemoteDevice {
 	 */
 	private OutputStream output_stream = null;
 
-	/**
-	 * Object of ClientThread. It used for connecting and obtaining socket.
-	 */
-	private ClientThread client = null;
-
 	// -----------------------------------------------------------------------------------
-
+	
 	/**
-	 * Initializes the RemoteDevice object and creates a ClientThread object.
+	 * Initializes the Remote device, socket associated with the connection for data transfer.
 	 * 
-	 * @param dev
-	 *            Device&nbsp;to&nbsp;be&nbsp;connected&nbsp;to
+	 * @param device Device to be connected to.
+	 * @param handler Handler of the object creator, which wishes to recieve the message.
 	 */
-	public RemoteDevice(BluetoothDevice dev) {
-
+	public ConnectedDevice(BluetoothDevice device, BluetoothSocket socket, Handler handler) {
+		
 		LogMsg("");
 
 		// device to be connected to
-		device = dev;
+		this.device = device;
 
-		// create a ClientThread object
-		client = new ClientThread(device);
-
+		// initialize the socket
+		this.socket = socket;
+				
+		//Handler of the caller
+		this.callerHandler = handler;
+		
 	}
-
-	/**
-	 * 
-	 * @return Returns <b>true</b> if RFCOMM channel socket is successfully
-	 *         obtained or <b>false</b> on error.
-	 */
-	public Boolean obtainRfcommSocket() {
-
-		// get the socket for the connection from ClientThread and return it.
-		socket = client.getSocket();
-
-		if (socket == null) {
-			return false; // error in obtaining the socket
-		}
-
-		else {
-			return true; // successfully obtained a socket
-		}
-
-	}
-
-	// TODO: Decide where to check for availability (or presence) of application
-	// in the Remote Device
-
-	/**
-	 * Socket obtained here is ready to be used for communication.
-	 * 
-	 * @return Returns <b>BluetoothSocket</b> if connection to RemoteDevice is
-	 *         successful or <b>null</b> on error.
-	 */
-	public BluetoothSocket connectToDevice() {
-
-		// connect to the client device using the socket obtained.
-		// Sets the ClientThread.CONNECTION_STATUS to false if there were any
-		// errors during this process.
-		client.start();
-
-		if (ClientThread.CONNECTION_STATUS == true) {
-
-			return socket; // successfully connected to the RemoteDevice
-		}
-
-		else {
-
-			return null; // Error in connecting the RemoteDevice
-		}
-
-	}
-
+	
 	/**
 	 * Obtains Input and Output Streams associated with the established
 	 * connection. Only after calling this method, data transfer can be
 	 * performed.
 	 * 
 	 * @return 
-	 *         Returns&nbsp;<b>true</b>&nbsp;if&nbsp;input-output&nbsp;streams&nbsp
-	 *         ;have&nbsp;been&nbsp;obtained&nbsp;successfully,&nbsp;else&nbsp;
-	 *         returns&nbsp;<b>false</b>.
+	 *         Returns <b>true</b> if input-output streams have been obtained successfully, else 
+	 *         returns <b>false</b>.
 	 */
 	public Boolean initializeIOStreams() {
 
@@ -230,15 +198,8 @@ public class RemoteDevice {
 
 	}
 
-	/**
-	 * Closes the socket and stops the on going communication through that
-	 * socket.
-	 */
-	public void closeConnectionFromDevice() {
-		client.cancel();
-	}
-
 	private void LogMsg(String msg) {
-		Log.d("RemoteDevice", msg);
+		Log.d("ConnectedDevice", msg);
 	}
+	
 }

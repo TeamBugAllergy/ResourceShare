@@ -1,4 +1,4 @@
-package com.teambugallergy.bluetooth;
+package com.bugallergy.teambugallergy;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -10,14 +10,27 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 
+/**
+ * Object of this class has methids for scanning bluetooth enabled nearby devices.
+ * 
+ * <i>
+ * <br/>--------------------------------------
+ * <br/>Constants of this class starts with 1
+ * <br/>--------------------------------------
+ * <br/>
+ * </i>
+ * :02-04-2014
+ * @author Adiga
+ */
+
 public class Scanner {
 
 	/**
 	 * Used by the handler to send the device_list back to the Activity.
 	 */
-	private static int DEVICE_LIST = 1;
+	public static int DEVICE_LIST = 10;
 	/**
-	 * Maximum of 20 devices can be stored in the device_list[ ].
+	 * Maximum of 20 devices can be stored in the device_list[].
 	 */
 	private final int MAX_DEVICES = 20;
 
@@ -35,7 +48,11 @@ public class Scanner {
 	private Handler handler;
 
 	// -----------------------------------------------------------------------------------
-
+		//Till this goes :) 02/04/2014
+		
+		
+	// -----------------------------------------------------------------------------------
+	
 	/**
 	 * @param hand
 	 *            Handler to which the device_list[] has to be sent.

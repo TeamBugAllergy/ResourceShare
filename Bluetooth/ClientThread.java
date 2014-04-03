@@ -1,27 +1,46 @@
-package com.teambugallergy.bluetooth;
+package com.bugallergy.teambugallergy;
 
 import java.io.IOException;
 import java.util.UUID;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.os.Handler;
 import android.util.Log;
 
+/**
+ * It is used by ProviderDevice object to connect to ProviderDevice
+ * 
+ * <i>
+ * <br/>--------------------------------------
+ * <br/>Constants of this class starts with 3
+ * <br/>--------------------------------------
+ * <br/>
+ * </i>
+ * :02-04-2014
+ * @author Adiga
+ */
 public class ClientThread extends Thread {
 
 	/**
-	 * Tells whether the connection to Remote Device was successful (true) or
-	 * failure (false).
+	 * <b>what</b> associated with a message to be sent.
 	 */
-	public static Boolean CONNECTION_STATUS = false;
-
+	public static int CONNECTION_STATUS = 30;
+	
+	/**
+	 * Tells whether the connection to Remote Device was successful or
+	 * failure.
+	 */
+	public static String CONNECTION_SUCCESS = "ClientThread_success";
+	public static String CONNECTION_FAILURE = "ClientThread_fail";
+	
 	/**
 	 * Univarsal UUID used by the app.
 	 */
 	private static UUID MY_UUID;
 
 	/**
-	 * Socket obtained for future connections.
+	 * Permanent Socket used for future connections.
 	 */
 	private BluetoothSocket socket;
 	/**
@@ -31,19 +50,34 @@ public class ClientThread extends Thread {
 
 	BluetoothAdapter ba;
 
+	
+	/** Handler of caller class
+	 * 
+	 */
+	private static Handler callerHandler;
+	
+	// -----------------------------------------------------------------------------------
+		//Till this goes :) 02/04/2014
+		
+		
 	// -----------------------------------------------------------------------------------
 
 	/**
 	 * Obtains MY_UUID and BluetoothAdapter.
 	 * 
-	 * @param dev
-	 *            Remote Device&nbsp;to&nbsp;be&nbsp;connected&nbsp;to.
+	 * @param device Remote Device to be connected to.
+	 * @param handler Handler of the object creator, which wishes to recieve the message.
 	 */
-	public ClientThread(BluetoothDevice dev) {
+	public ClientThread(BluetoothDevice device, Handler handler) {
+		
 		LogMsg("");
+		
 		// device to be connected to
-		device = dev;
+		this.device = device;
 
+		//Handler of the caller
+		this.callerHandler = handler;
+		
 		// initialize the socket
 		socket = null;
 
@@ -58,7 +92,7 @@ public class ClientThread extends Thread {
 		ba = BluetoothAdapter.getDefaultAdapter();
 
 	}
-
+	
 	/**
 	 * Obtains and returns a <b>socket</b> to connect to Remote Device or
 	 * <b>null</b> on error.
@@ -80,7 +114,7 @@ public class ClientThread extends Thread {
 
 		}
 
-		LogMsg("Obtained a RemoteSocekt to " + device + " succesfully");
+		LogMsg("Obtained a socekt to " + device + " succesfully");
 
 		// return the socket
 		return socket;
@@ -88,17 +122,12 @@ public class ClientThread extends Thread {
 	}
 
 	/**
-	 * Tries to connect to the Remote Device.
-	 * 
-	 * Sets the ClientThread.CONNECTION_STATUS flag to indicate the result of
-	 * this try.
+	 * Tries to connect to the Remote Device. (By trying to connect to server (or provider) devices )
+	 * Result of connection will be sent to Caller through Handler Messages.
 	 */
 	public void run() {
 		// Cancel discovery because it will slow down the connection
 		ba.cancelDiscovery();
-
-		//Initial value of the flag CONNECTION_STATUS = false (i.e no connection yet)
-		CONNECTION_STATUS = false;
 		
 		// Connect the Remote Device through the socket. This will block
 		// until it succeeds or throws an exception
@@ -122,8 +151,8 @@ public class ClientThread extends Thread {
 				return;
 			}
 
-			// Set the error flag to false, to notify the caller.
-			CONNECTION_STATUS = false;
+			//Tell the caller about this error.
+			callerHandler.obtainMessage(ClientThread.CONNECTION_STATUS, ClientThread.CONNECTION_FAILURE).sendToTarget();
 
 			// terminate the thread
 			return;
@@ -131,9 +160,9 @@ public class ClientThread extends Thread {
 
 		LogMsg("Successfully connected to the Remote Device.");
 
-		// Set the error flag to true, to notify the caller.
-		CONNECTION_STATUS = true;
-
+		//Tell the caller about the success of connection
+		callerHandler.obtainMessage(ClientThread.CONNECTION_STATUS, ClientThread.CONNECTION_SUCCESS).sendToTarget();
+		
 		// terminate the thread
 		return;
 
@@ -145,13 +174,11 @@ public class ClientThread extends Thread {
 	public void cancel() {
 		try {
 			socket.close();
+			LogMsg("server_socket has been closed");
 
 		} catch (IOException e) {
-
 			LogMsg("Error: Cannot close the socket- " + e);
 
-			// terminate the thread
-			return;
 		}
 
 	}
