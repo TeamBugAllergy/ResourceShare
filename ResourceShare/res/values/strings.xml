@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">ResourceShare</string>
+    
+    <string name="bluetooth_on">Bluetooth is On</string>
+    <string name="bluetooth_off">Bluetooth is Off</string>
+    
+    <string name="provide_resource">Provide Resource</string>
+    <string name="seek_resource">Seek Resource</string>
+
+    <string name="ok">OK</string>
+    
+</resources>
