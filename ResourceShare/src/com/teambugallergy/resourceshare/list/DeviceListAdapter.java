@@ -14,8 +14,11 @@ import android.widget.TextView;
  * This Class takes care of adding or updating the rows in the list.
  * This class will have Layout Inflater which does the adding,removing etc operations on the list.
  * 
+ * <b>The RowValues of this Adapter has 3 feilds. [0]th has name of BluetoothDevice,[1]st tells if the device is connectable
+ *  and [2]nd tells if the Row has already been clicked before("1") or not("0")</b> 
+ * 
  * <b>Separate ListAdpter should be defined for different types of rows in the list.</b>
- * @since 04-04-2014
+ * @since 06-04-2014
  * @author Adiga
  * 
  */
@@ -46,6 +49,9 @@ public class DeviceListAdapter extends BaseAdapter{
 		
 	}
 	
+	/**
+	 * @return Number of rows/items in the list.
+	 */
 	@Override
 	public int getCount() {
 
@@ -53,12 +59,18 @@ public class DeviceListAdapter extends BaseAdapter{
 		
 	}
 
+	/**
+	 * @return The row Object at index <b>position</b> in the list.
+	 */
 	@Override
 	public Object getItem(int position) {
 
 		return data.get(position);
 	}
 
+	/**
+	 * @return Does not return Id. :( 
+	 */
 	@Override
 	public long getItemId(int position) {
 
@@ -72,12 +84,15 @@ public class DeviceListAdapter extends BaseAdapter{
 	        if(convertView==null)
 	            vi = inflater.inflate(R.layout.list_row, null);
 	        
+	     //Get the references to View in the row   
 	     TextView device_name = (TextView)vi.findViewById(R.id.device_name);
 	     TextView connectivity_status = (TextView)vi.findViewById(R.id.connectivity_status);
 	    
-	     RowValues row_values = new RowValues(2);
+	     //Get the row values from object of RowValues.  
+	     RowValues row_values = new RowValues(3);
 	     row_values = data.get(position);
 	     
+	     //Set the vallues of Views with values of object obatined above.
 	     device_name.setText(row_values.getRowValues(0));
 	     connectivity_status.setText(row_values.getRowValues(1));
 	     

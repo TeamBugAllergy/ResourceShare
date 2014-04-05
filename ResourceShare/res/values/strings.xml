@@ -9,6 +9,8 @@
     <string name="provide_resource">Provide Resource</string>
     <string name="seek_resource">Seek Resource</string>
 
+    <string name="refresh">Refresh</string>
+    
     <string name="ok">OK</string>
     
 </resources>

@@ -10,12 +10,14 @@ import com.teambugallergy.resourceshare.list.*;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
-import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.Toast;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ListView;
@@ -35,12 +37,12 @@ import android.widget.ListView;
  * -------------------------------------- <br/>
  * Constants of this class starts with 8 <br/>
  * -------------------------------------- <br/>
- * </i> 04-04-2014
+ * </i> 06-04-2014
  * 
  * @author Adiga
  * 
  */
-public class SeekerActivity extends Activity implements OnItemClickListener {
+public class SeekerActivity extends Activity implements OnClickListener, OnItemClickListener {
 
 	// Handler to receive the device_list
 	// activity_device_list to display the list of devices
@@ -53,6 +55,19 @@ public class SeekerActivity extends Activity implements OnItemClickListener {
 	 */
 	private final int MAX_CONNECTED_DEVICES = 80;
 
+	/**
+	 * Used to display the connection status of the device in the list.
+	 */
+	public final static String STATUS_UNKOWN = "Unkown";
+	public final static String STATUS_CONNECTED = "Connected";
+	public final static String STATUS_DISCONNECTED = "Unavailable";
+
+	
+	/**
+	 * Refresh Button to Restart the scanning for devices.
+	 */
+	private Button refresh;
+	
 	/**
 	 * List objcet that has methods for addItem, removeItem and
 	 * onItemClickListners for List Items
@@ -96,6 +111,13 @@ public class SeekerActivity extends Activity implements OnItemClickListener {
 	 */
 	private static int connected_device_num = 0;
 
+	/**
+	 * Index of the device that has been clicked to connect to the device.
+	 * <b>This is used to set the connection status of that device when a message is received.</br>
+	 * If there is no device waiting to be connected to (no dialog has been displyed), then the value will be -1.</b>
+	 */
+	private static int clicked_device_index = -1;
+	
 	// -----------------------------------------------------------------------------------
 	/**
 	 * Handler to receive messages.
@@ -121,8 +143,7 @@ public class SeekerActivity extends Activity implements OnItemClickListener {
 				for (int i = 0; device_list[i] != null; i++) {
 					// if the device is not null,
 					// add the new device_list[] into list
-					list.addItem(new String[] { device_list[i].getName(),
-							"Unkown" });
+					list.addItem(new String[] { device_list[i].getName(), SeekerActivity.STATUS_UNKOWN, "0" });
 
 					// and tell the adapter about changes
 					list.notifyDataSetChanged();
@@ -140,11 +161,26 @@ public class SeekerActivity extends Activity implements OnItemClickListener {
 
 					//TODO:Test everything after building Provider end.
 					
+					//Then create a new ConnectedDevice object with the obtained connection and save it in the array.
 					connected_device_list[connected_device_num] = new ConnectedDevice(
 							provider_device.getDevice(),
 							provider_device.getSocket(), seekerActivityHandler);
 					connected_device_num++;
-
+					
+					//Also change the status bit to "1" to indicate that the device has been connected.
+					//clicked_device_index will have the index of the device that has been clicked.
+					list.getItem(clicked_device_index).setRowValues(2, "1");
+					
+					//Change the status of the device from "Unkown" or "App not found" to "Connected"
+					list.getItem(clicked_device_index).setRowValues(1, SeekerActivity.STATUS_CONNECTED);
+					list.notifyDataSetChanged();
+					
+					//and reset the index of clicked device.
+					clicked_device_index = -1;
+					
+					LogMsg("Changed Connection_status to Connected for: " + clicked_device_index );
+					
+					
 					// ONCE THE USE OF PROVIDER DEVICE IS OVER, SET IT TO NULL
 					// FOR RE-USE BY onItemClickListner()
 					provider_device = null;
@@ -160,7 +196,21 @@ public class SeekerActivity extends Activity implements OnItemClickListener {
 
 				else if (msg.obj
 						.equals(RemoteProviderDevice.CONNECTION_FAILURE)) {
+					
+					//Also change the status bit to "0" to indicate that the device has been connected.
+					//clicked_device_index will have the index of the device that has been clicked.
+					list.getItem(clicked_device_index).setRowValues(2, "0");
+					
+					//Change the status of the device from "Unkown" or "Connected" to "App not found"
+					list.getItem(clicked_device_index).setRowValues(1, SeekerActivity.STATUS_DISCONNECTED);
+					list.notifyDataSetChanged();
+					
+					//and reset the index of clicked device.
+					clicked_device_index = -1;
 
+					LogMsg("Changed Connection_status to 'App not found' for: " + clicked_device_index );
+					
+					
 					dialog.changeTitle("Error");
 					dialog.changeDialog("Please make sure that the device has the application installed.");
 					// Hide the ProgressBar
@@ -180,8 +230,12 @@ public class SeekerActivity extends Activity implements OnItemClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		// Common ListView to display the devices
-		setContentView(R.layout.activity_list);
+		setContentView(R.layout.activity_seeker);
 
+		//Button to restart the scanning
+		refresh = (Button)findViewById(R.id.refresh);
+		refresh.setOnClickListener(this);
+		
 		// Get a reference to ListView from layout file
 		ListView l = (ListView) findViewById(R.id.list);
 
@@ -204,10 +258,7 @@ public class SeekerActivity extends Activity implements OnItemClickListener {
 		connected_device_list = new ConnectedDevice[MAX_CONNECTED_DEVICES];
 
 		seekerActivityContext = this;
-		/*
-		 * This will be done in onStart() method // and start scanning for
-		 * nearby devices scanner.startScanningForDevices(this);
-		 */
+		
 	}
 
 	@Override
@@ -224,39 +275,23 @@ public class SeekerActivity extends Activity implements OnItemClickListener {
 		BluetoothDevice trying_device = device_list[device_num];
 		LogMsg("device clicked:" + trying_device.getName());
 
-		// true if device already present in the connected_device array else
-		// false.
-		boolean already_present = false;
-
-		// Check if the device already clicked
-		// for each device in the array,
-		for (int i = 0; connected_device_list[i] != null; i++) {
-
-			// if the device found already exists in the array of
-			// devices
-			if (connected_device_list[i].getDevice().getAddress()
-					.equals(trying_device.getAddress()) == true) {
-
-				LogMsg("This Device is already Present in the connected_device_list[].");
-				// Display an error toast
-				Toast.makeText(
-						this,
-						"This Device has been selected before. Try some other devices.",
-						Toast.LENGTH_SHORT).show();
-
-				// do not add the device again to the array
-				already_present = true;
-				break;
-			}
-		}
 		// ONLY IF THE DEVICE IS NOT PREVIOUSLY CLICKED
-		if (already_present == false) {
-
+		if( list.getItem(arg2).getRowValues(2).equals("0") )
+		{
+			//MAKE IT CLICKED
+			list.getItem(arg2).setRowValues(2, "1");
+			
 			// Try to connect to the clicked device.
 			// create a new object
 			provider_device = new RemoteProviderDevice(trying_device,
 					seekerActivityHandler);
 
+			//Save the index of the clicked device.
+			//It will be used by Handler to change the values of the corresponding list item 
+			//based on the result of connection.
+			//Its value will be reset to -1 after using it by the Handler.
+			clicked_device_index = arg2;
+			
 			// If you get the socket succesfully then try to connect it.
 			// The status of the connectivity will be sent by Message Handlers
 			// from
@@ -287,8 +322,47 @@ public class SeekerActivity extends Activity implements OnItemClickListener {
 						Toast.LENGTH_LONG).show();
 			}
 		}
+		else
+		{
+			// if the device found has already been clicked before 
+			LogMsg("This Device is already Present in the connected_device_list[].");
+			// Display an error toast
+			Toast.makeText(
+					this,
+					"This Device has been selected before. Try some other devices.",
+					Toast.LENGTH_SHORT).show();
+
+		}
 	}
 
+
+	/**
+	 * Restart the scanning for devices process. 
+	 */
+	@Override
+	public void onClick(View v) {
+
+		if(v.getId() == refresh.getId())
+		{
+			// only if scanner is currently scanning
+			if (scanner.isScanning() == true) {
+				//stop the scanning first
+				scanner.stopScanningForDevices(this);
+			}
+			// Create a Scanner object with a Handler to receive an array of
+			// BluetoothDevice objects
+			scanner = new Scanner(seekerActivityHandler);
+
+			// and start scanning for nearby devices
+			scanner.startScanningForDevices(this);
+			
+			Toast.makeText(this, "Searching for devices...", Toast.LENGTH_LONG).show();
+			LogMsg("Restarted the scanning process.");
+
+		}
+	}
+
+	
 	/**
 	 * Stop scanning for devices once this activity pauses
 	 */
@@ -318,21 +392,7 @@ public class SeekerActivity extends Activity implements OnItemClickListener {
 		}
 
 	}
-
-	/**
-	 * Stop scanning for devices once this activity is destroyed
-	 */
-	@Override
-	protected void onDestroy() {
-		super.onDestroy();
-
-		// only if scanner is not yet started scanning
-		if (scanner.isScanning() == true) {
-			// stop scanning for devices
-			scanner.stopScanningForDevices(this);
-		}
-	}
-
+		
 	/**
 	 * Start / Restart scanning once this activity starts
 	 */
@@ -340,19 +400,22 @@ public class SeekerActivity extends Activity implements OnItemClickListener {
 	protected void onStart() {
 		super.onStart();
 
-		// only if scanner is not yet started scanning
-		if (scanner.isScanning() == false) {
-			// Create a Scanner object with a Handler to receive an array of
-			// BluetoothDevice objects
-			scanner = new Scanner(seekerActivityHandler);
-
+		// only if scanner is currently scanning
+					if (scanner.isScanning() == true) {
+						//stop the scanning first
+						scanner.stopScanningForDevices(this);
+					}
 			// and start scanning for nearby devices
 			scanner.startScanningForDevices(this);
-		}
+			
+			Toast.makeText(this, "Searching for devices...", Toast.LENGTH_LONG).show();
+			LogMsg("Started the scanning process.");
+	
 
 	}
 
 	private static void LogMsg(String msg) {
 		Log.d("SeekerActivity", msg);
 	}
+
 }

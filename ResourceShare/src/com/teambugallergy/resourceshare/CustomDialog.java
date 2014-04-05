@@ -15,7 +15,7 @@ import android.widget.TextView;
  * Layout used is dialog_layout.
  * There is a message displayed and a OK button.
  * 
- * 04-04-2014
+ * 05-04-2014
  * @author Adiga
  *
  */
