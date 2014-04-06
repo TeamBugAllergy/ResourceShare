@@ -56,7 +56,10 @@ public class RemoteProviderDevice {
 	private static Handler callerHandler;
 	
 	// -----------------------------------------------------------------------------------
-	//Till this goes :) 02/04/2014
+
+	/**
+	 * The status of the connection is sent to the caller through message with 'what' RemoteSeekerDevice.CONNECTION_STATUS.
+	 */
 	private static Handler remoteProviderHandler = new Handler(){
 		public void handleMessage(Message msg) {
 			

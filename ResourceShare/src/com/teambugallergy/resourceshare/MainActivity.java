@@ -66,30 +66,29 @@ public class MainActivity extends Activity implements OnClickListener {
 		if (ba != null) {
 			// allow the user to switch on and off the blueetooth
 			bluetooth_switch = (ToggleButton) findViewById(R.id.bluetooth_switch);
-			
+
 			provide_resource = (Button) findViewById(R.id.provide_resource);
 			provide_resource.setOnClickListener(this);
 
 			seek_resource = (Button) findViewById(R.id.seek_resource);
 			seek_resource.setOnClickListener(this);
 
-
 			// based on the current state of Bluetooth set the State of
 			// ToggleButoon
 			if (ba.isEnabled()) {
 				// Show that bluetooth is currenlty switched on
 				bluetooth_switch.setChecked(true);
-				
-				//set the buttons as clickable
+
+				// set the buttons as clickable
 				provide_resource.setClickable(true);
 				seek_resource.setClickable(true);
-				
+
 				LogMsg("Bluetooth was Switched on");
 			} else {
 				// Show that bluetooth is currenlty switched off
 				bluetooth_switch.setChecked(false);
 
-				//set the buttons as non clickable
+				// set the buttons as non clickable
 				provide_resource.setClickable(false);
 				seek_resource.setClickable(false);
 
@@ -147,11 +146,11 @@ public class MainActivity extends Activity implements OnClickListener {
 		if (requestCode == BT_ENABLE) {
 			// if the Request is accepted i.e Bluetooth is Switching on
 			if (resultCode == RESULT_OK) {
-				
-				//set the text of bluetooth_switch as on
+
+				// set the text of bluetooth_switch as on
 				bluetooth_switch.setChecked(true);
-				
-				//set the buttons as clickable
+
+				// set the buttons as clickable
 				provide_resource.setClickable(true);
 				seek_resource.setClickable(true);
 
@@ -159,11 +158,11 @@ public class MainActivity extends Activity implements OnClickListener {
 			}
 			// if User declined to Switch on the bluletooth
 			else {
-				
-				//set the text of bluetooth_switch as off
+
+				// set the text of bluetooth_switch as off
 				bluetooth_switch.setChecked(false);
-				
-				//set the buttons as non clickable
+
+				// set the buttons as non clickable
 				provide_resource.setClickable(false);
 				seek_resource.setClickable(false);
 
@@ -176,27 +175,25 @@ public class MainActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onClick(View v) {
-		
-		/*if(v.getId() == provide_resource.getId())
-		{
-			//TODO:redirect to ProviderActivty
-			//redirect to SeekerActivty
+
+		if (v.getId() == provide_resource.getId()) {
+			// TODO:redirect to ProviderActivty
+			// redirect to SeekerActivty
 			Intent i = new Intent(this, ProviderActivity.class);
 			startActivity(i);
-			
-			//finish this Activity
-			//finish();
-			
+
+			// finish this Activity
+			// finish();
+
 		}
-		*/
-		if(v.getId() == seek_resource.getId())
-		{
-			//redirect to SeekerActivty
+
+		if (v.getId() == seek_resource.getId()) {
+			// redirect to SeekerActivty
 			Intent i = new Intent(this, SeekerActivity.class);
 			startActivity(i);
-			
-			//finish this Activity
-			//finish();
+
+			// finish this Activity
+			// finish();
 		}
 	}
 
@@ -209,19 +206,18 @@ public class MainActivity extends Activity implements OnClickListener {
 			// Show that bluetooth is currenlty switched on
 			bluetooth_switch.setChecked(true);
 
-			//set the buttons as clickable
+			// set the buttons as clickable
 			provide_resource.setClickable(true);
 			seek_resource.setClickable(true);
-			
+
 			LogMsg("Bluetooth was Switched on");
 		} else {
 			// Show that bluetooth is currenlty switched off
 			bluetooth_switch.setChecked(false);
-			
-			//set the buttons as non clickable
+
+			// set the buttons as non clickable
 			provide_resource.setClickable(false);
 			seek_resource.setClickable(false);
-
 
 			LogMsg("Bluetooth was Switched off");
 		}

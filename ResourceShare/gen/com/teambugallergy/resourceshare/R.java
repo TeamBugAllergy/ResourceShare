@@ -11,7 +11,9 @@ public final class R {
     public static final class attr {
     }
     public static final class color {
-        public static final int list_background=0x7f040000;
+        public static final int list_background_green=0x7f040002;
+        public static final int list_background_red=0x7f040001;
+        public static final int list_background_white=0x7f040000;
     }
     public static final class dimen {
         /**  Default screen margins, per the Android Design guidelines. 
@@ -28,14 +30,15 @@ public final class R {
     }
     public static final class id {
         public static final int bluetooth_switch=0x7f080000;
-        public static final int connectivity_status=0x7f080009;
-        public static final int device_name=0x7f080008;
-        public static final int list=0x7f080004;
-        public static final int message=0x7f080005;
-        public static final int ok=0x7f080007;
-        public static final int progress_bar=0x7f080006;
+        public static final int connected_device=0x7f080003;
+        public static final int connectivity_status=0x7f08000a;
+        public static final int device_name=0x7f080009;
+        public static final int list=0x7f080005;
+        public static final int message=0x7f080006;
+        public static final int ok=0x7f080008;
+        public static final int progress_bar=0x7f080007;
         public static final int provide_resource=0x7f080001;
-        public static final int refresh=0x7f080003;
+        public static final int refresh=0x7f080004;
         public static final int seek_resource=0x7f080002;
     }
     public static final class layout {

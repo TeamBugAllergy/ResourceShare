@@ -2,22 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
+    android:background="@color/list_background_white"
     android:gravity="center"
-     >
-    
+    android:orientation="horizontal" >
+
     <TextView
         android:id="@+id/device_name"
         android:layout_width="0dip"
-        android:layout_weight="0.5"
         android:layout_height="50dip"
+        android:layout_weight="0.5"
         android:gravity="center" />
-    
+
     <TextView
         android:id="@+id/connectivity_status"
         android:layout_width="0dip"
-        android:layout_weight="0.5"
         android:layout_height="50dip"
+        android:layout_weight="0.5"
         android:gravity="center" />
 
 </LinearLayout>
