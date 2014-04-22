@@ -1,6 +1,7 @@
 package com.teambugallergy.resourceshare;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import com.teambugallergy.resourceshare.bluetooth.ConnectedDevice;
 import com.teambugallergy.resourceshare.bluetooth.RemoteProviderDevice;
@@ -10,6 +11,7 @@ import com.teambugallergy.resourceshare.list.*;
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.os.Bundle;
@@ -66,7 +68,6 @@ public class SeekerActivity extends Activity implements OnClickListener,
 	/**
 	 * Used for background color of each row.
 	 */
-	private static int WHITE;
 	private static int RED;
 	private static int GREEN;
 
@@ -76,6 +77,11 @@ public class SeekerActivity extends Activity implements OnClickListener,
 	private Button refresh;
 
 	/**
+	 * Button to goto next Activity along with the an array of ConnectedDevices objects
+	 */
+	private static Button next;
+	
+	/**
 	 * List objcet that has methods for addItem, removeItem and
 	 * onItemClickListners for List Items
 	 */
@@ -84,7 +90,7 @@ public class SeekerActivity extends Activity implements OnClickListener,
 	/**
 	 * Scanner object to scan and obtain a list of BluetoothDevice objects.
 	 */
-	Scanner scanner;
+	private Scanner scanner;
 
 	/**
 	 * An object that represents the remote provider device. Any operations to
@@ -217,6 +223,12 @@ public class SeekerActivity extends Activity implements OnClickListener,
 							"Connected to the device.", Toast.LENGTH_SHORT)
 							.show();
 
+					//Also set the visibilty of 'Next' button, if it is not already visible
+					if( !next.isShown() )
+					{
+						next.setVisibility(View.VISIBLE);
+					}
+					
 				}
 				// if the connection was failed
 				else if (msg.obj
@@ -266,7 +278,6 @@ public class SeekerActivity extends Activity implements OnClickListener,
 		setContentView(R.layout.activity_seeker);
 
 		// SET THE COLORS RESOURCE IDs OF CONSTANTS
-		WHITE = R.color.list_background_white;
 		RED = R.color.list_background_red;
 		GREEN = R.color.list_background_green;
 
@@ -274,6 +285,10 @@ public class SeekerActivity extends Activity implements OnClickListener,
 		refresh = (Button) findViewById(R.id.refresh);
 		refresh.setOnClickListener(this);
 
+		//Button to goto next Activity
+		next = (Button) findViewById(R.id.next);
+		next.setOnClickListener(this);
+		
 		// Get a reference to ListView from layout file
 		ListView l = (ListView) findViewById(R.id.list);
 
@@ -394,6 +409,26 @@ public class SeekerActivity extends Activity implements OnClickListener,
 					.show();
 			LogMsg("Restarted the scanning process.");
 
+		}
+		
+		//Stop scanning for devices
+		// and goto next ResourceListActivity along with array of ConnectedDevices objects.
+		if(v.getId() == next.getId())
+		{
+			if(connected_device_list.length > 0)
+			{
+				Intent i = new Intent(this, ResourceListActivity.class);
+				//put the array of connected devices
+
+				//TODO: *************************
+				//PROBLEM IN SENDING THE connected_device_list[] THROUGH INTENTS
+				//TODO:**************************
+				
+				i.putParcelableArrayListExtra("CONNECTED_DEVICE_LIST", new ArrayList<ConnectedDevice>(Arrays.asList(connected_device_list)) );
+				//and send it to ResourceListActivity
+				startActivity(i);
+				//finish()
+			}
 		}
 	}
 

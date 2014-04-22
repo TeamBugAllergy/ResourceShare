@@ -3,14 +3,20 @@ package com.teambugallergy.resourceshare.bluetooth;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
+
+import com.teambugallergy.resourceshare.constants.Resources;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Log;
 
 /**
  * This class has all the methods required for initializing streams,reading and wrinting of data.
+ * It also implements Parcelable interface to make it pass-able through intents.
  * <i>
  * <br/>--------------------------------------
  * <br/>Constants of this class starts with 6 
@@ -21,8 +27,8 @@ import android.util.Log;
  * 02-04-2014
  * @author Adiga
  */
-public class ConnectedDevice {
-	
+public class ConnectedDevice implements Parcelable, Serializable{
+
 	/**
 	 * Device to be connected to.
 	 */
@@ -184,9 +190,8 @@ public class ConnectedDevice {
 						// data in String form
 						data = new String(buffer, 0, bytes);
 
-						// TODO: Send the obtained bytes to the UI activity
-						// handler.obtainMessage(MESSAGE, bytes, -1,
-						// data).sendToTarget();
+						// Send the obtained bytes to the UI activity
+						callerHandler.obtainMessage(Resources.REQUESTING_RESOURCE_ID, bytes, -1, data).sendToTarget();
 
 						LogMsg("Data received from " + device.getName() + ": "
 								+ data);
@@ -210,5 +215,51 @@ public class ConnectedDevice {
 	private void LogMsg(String msg) {
 		Log.d("ConnectedDevice", msg);
 	}
+
+	//To make th objects praceable
+	@Override
+	public int describeContents() {
+		// Auto-generated method stub
+		return 0;
+	}
+
+	public ConnectedDevice(Parcel in) {
+		
+		//THE ORDER SHOULD BE SAME AS THAT OF writeToParcel()
+		// device to be connected to
+				this.device = (BluetoothDevice) in.readValue(null);
+
+				// socket of this obj
+				this.socket = (BluetoothSocket) in.readValue(null);
+				
+				//Handler of the caller
+				this.callerHandler = (Handler) in.readValue(null);;
+	}
 	
+	/**
+	 * Making the object of ConnectedDevice into an parceable object.
+	 */
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		
+		//THE ORDER SHOULD BE SAME AS THAT OF ConnectedDevice(Parcel in)
+		
+		//current BluetoothDevice
+		dest.writeValue(device);
+		//current BluetoothSocket
+		dest.writeValue(socket);
+		//Handler of the caller
+		dest.writeValue(callerHandler);
+	}
+	
+	//I don't know what below code does :P
+	public static final Parcelable.Creator<ConnectedDevice> CREATOR = new Parcelable.Creator<ConnectedDevice>() {
+        public ConnectedDevice createFromParcel(Parcel in) {
+            return new ConnectedDevice(in);
+        }
+        
+        public ConnectedDevice[] newArray(int size) {
+            return new ConnectedDevice[size];
+        }
+	};
 }

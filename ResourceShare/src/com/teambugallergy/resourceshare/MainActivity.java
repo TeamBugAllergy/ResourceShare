@@ -223,6 +223,33 @@ public class MainActivity extends Activity implements OnClickListener {
 		}
 
 	}
+	
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		// based on the current state of Bluetooth set the State of ToggleButoon
+				if (ba.isEnabled()) {
+					// Show that bluetooth is currenlty switched on
+					bluetooth_switch.setChecked(true);
+
+					// set the buttons as clickable
+					provide_resource.setClickable(true);
+					seek_resource.setClickable(true);
+
+					LogMsg("Bluetooth was Switched on");
+				} else {
+					// Show that bluetooth is currenlty switched off
+					bluetooth_switch.setChecked(false);
+
+					// set the buttons as non clickable
+					provide_resource.setClickable(false);
+					seek_resource.setClickable(false);
+
+					LogMsg("Bluetooth was Switched off");
+				}
+				
+	}
 
 	/**
 	 * used to make toasts

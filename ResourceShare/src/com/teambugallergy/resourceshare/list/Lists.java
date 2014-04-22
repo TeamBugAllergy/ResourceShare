@@ -2,13 +2,8 @@ package com.teambugallergy.resourceshare.list;
 
 import java.util.ArrayList;
 
-import com.teambugallergy.resourceshare.R;
-
-import android.content.Context;
-import android.content.res.Resources;
 import android.util.Log;
 import android.widget.BaseAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 
 /**
