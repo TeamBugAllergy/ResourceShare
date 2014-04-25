@@ -1,0 +1,38 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical" >
+
+    <RadioGroup
+        android:id="@+id/ResourceDisplayRadioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <RadioButton
+            android:id="@+id/ResourceDisplayRadioButton1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="Flash"
+             />
+
+        <RadioButton
+            android:id="@+id/ResourceDisplayRadioButton2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Camera" />
+
+        <RadioButton
+            android:id="@+id/ResourceDisplayRadioButton3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Wifi" />
+    </RadioGroup>
+
+    <Button
+        	android:id="@+id/ResourceDisplayNextButton"
+     		android:layout_width="fill_parent"
+     		android:layout_height="wrap_content"
+     		android:text="Next"
+     		android:layout_gravity="center_horizontal"/>
+</LinearLayout>
