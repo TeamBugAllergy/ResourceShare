@@ -1,7 +1,6 @@
 package com.teambugallergy.resourceshare;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import com.teambugallergy.resourceshare.bluetooth.ConnectedDevice;
 import com.teambugallergy.resourceshare.bluetooth.RemoteProviderDevice;
@@ -56,7 +55,7 @@ public class SeekerActivity extends Activity implements OnClickListener,
 	 * Maximum of 5 devices can be stored in the connected_device_list[]. i.e
 	 * Maximum of 5 Resource Providers are allowed.
 	 */
-	private final int MAX_CONNECTED_DEVICES = 80;
+	private final int MAX_CONNECTED_DEVICES = 5;
 
 	/**
 	 * Used to display the connection status of the device in the list.
@@ -106,8 +105,9 @@ public class SeekerActivity extends Activity implements OnClickListener,
 
 	/**
 	 * An array of BluetoothDevices that are transfered to next Activity.
+	 * This member is used by ResourceListActivity also.
 	 */
-	private static ConnectedDevice[] connected_device_list;
+	public static ConnectedDevice[] connected_device_list;
 
 	/**
 	 * Dialog object used to display ProgressBar while waiting for Connecting a
@@ -207,11 +207,11 @@ public class SeekerActivity extends Activity implements OnClickListener,
 					// set the color of the row to GREEN
 					list.changeColor(SeekerActivity.GREEN, clicked_device_index);
 
-					// and reset the index of clicked device.
-					clicked_device_index = -1;
-
 					LogMsg("Changed Connection_status to Connected for: "
 							+ clicked_device_index);
+
+					// and reset the index of clicked device.
+					clicked_device_index = -1;
 
 					// ONCE THE USE OF PROVIDER DEVICE IS OVER, SET IT TO NULL
 					// FOR RE-USE BY onItemClickListner()
@@ -308,7 +308,8 @@ public class SeekerActivity extends Activity implements OnClickListener,
 		scanner = new Scanner(seekerActivityHandler);
 
 		// Array of connected devices to be passed to next activity
-		connected_device_list = new ConnectedDevice[MAX_CONNECTED_DEVICES];
+		//below statement is put in onStart
+		//connected_device_list = new ConnectedDevice[MAX_CONNECTED_DEVICES];
 
 		seekerActivityContext = this;
 
@@ -415,21 +416,58 @@ public class SeekerActivity extends Activity implements OnClickListener,
 		// and goto next ResourceListActivity along with array of ConnectedDevices objects.
 		if(v.getId() == next.getId())
 		{
-			if(connected_device_list.length > 0)
+			//if there is one or more connected devices,
+			//if(connected_device_list[0] != null) OR
+			if(connected_device_num > 0)
 			{
 				Intent i = new Intent(this, ResourceListActivity.class);
-				//put the array of connected devices
 
-				//TODO: *************************
 				//PROBLEM IN SENDING THE connected_device_list[] THROUGH INTENTS
-				//TODO:**************************
-				
-				i.putParcelableArrayListExtra("CONNECTED_DEVICE_LIST", new ArrayList<ConnectedDevice>(Arrays.asList(connected_device_list)) );
-				//and send it to ResourceListActivity
+				//So connected_device_list[] has been made public and static
 				startActivity(i);
 				//finish()
 			}
+			else
+			{
+				Toast.makeText(this, "No device is connected.", Toast.LENGTH_LONG)
+				.show();
+				
+				LogMsg("ERROR:connected_device_list has no connected devices.");
+			}
+			
 		}
+	}
+	
+	/**
+	 * Start / Restart scanning once this activity starts
+	 */
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		LogMsg("INSIDE:onStart");
+		
+		// only if scanner is currently scanning
+		if (scanner.isScanning() == true) {
+			// stop the scanning first
+			scanner.stopScanningForDevices(this);
+		}
+		// and start scanning for nearby devices
+		scanner.startScanningForDevices(this);
+
+		Toast.makeText(this, "Searching for devices...", Toast.LENGTH_LONG)
+				.show();
+		
+		//hide the 'next' button
+		next.setVisibility(View.GONE);
+		
+		// Array of connected devices to be passed to next activity
+		connected_device_list = new ConnectedDevice[MAX_CONNECTED_DEVICES];
+		//Global index for connected_device_list[] array. It is incremented each time a successfully connected device is added.
+		connected_device_num = 0;
+		
+		LogMsg("Started the scanning process.");
+		
 	}
 
 	/**
@@ -461,28 +499,7 @@ public class SeekerActivity extends Activity implements OnClickListener,
 		}
 
 	}
-
-	/**
-	 * Start / Restart scanning once this activity starts
-	 */
-	@Override
-	protected void onStart() {
-		super.onStart();
-
-		// only if scanner is currently scanning
-		if (scanner.isScanning() == true) {
-			// stop the scanning first
-			scanner.stopScanningForDevices(this);
-		}
-		// and start scanning for nearby devices
-		scanner.startScanningForDevices(this);
-
-		Toast.makeText(this, "Searching for devices...", Toast.LENGTH_LONG)
-				.show();
-		LogMsg("Started the scanning process.");
-
-	}
-
+	
 	private static void LogMsg(String msg) {
 		Log.d("SeekerActivity", msg);
 	}

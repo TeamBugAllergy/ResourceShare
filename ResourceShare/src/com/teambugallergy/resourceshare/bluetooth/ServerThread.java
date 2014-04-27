@@ -7,7 +7,6 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothServerSocket;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 
 /**
@@ -56,7 +55,7 @@ public class ServerThread extends Thread {
 	/**
 	 * Permanent Socket used for future connections.
 	 */
-	private BluetoothSocket socket;
+	public static BluetoothSocket socket;
 
 	/**
 	 * Handler of caller class
@@ -76,6 +75,9 @@ public class ServerThread extends Thread {
 	 *            message.
 	 */
 	public ServerThread(BluetoothDevice device, Handler handler) {
+
+		//LogMsg("INSIDE:ServerThreadServerThread");
+		
 		LogMsg("");
 
 		// device to be connected to
@@ -103,6 +105,9 @@ public class ServerThread extends Thread {
 	 * @return BluetoothServerSocket or null.
 	 */
 	public BluetoothServerSocket getServerSocket() {
+		
+		//LogMsg("INSIDE:getServerSocket");
+		
 		// try to obtain a server socket to listen
 		try {
 			// MY_UUID is the app's UUID string, also used by the client code
@@ -128,6 +133,9 @@ public class ServerThread extends Thread {
 	 * Messages.
 	 */
 	public void run() {
+
+		//LogMsg("INSIDE:run");
+		
 		// initialize the socket
 		socket = null;
 
@@ -145,10 +153,10 @@ public class ServerThread extends Thread {
 				// SIMPLY STOP FURTHER LISTNENING.
 				// Notify the caller that connection could not be created, using
 				// Handler.
-				// callerHandler.obtainMessage(CONNECTION_STATUS,
-				// CONNECTION_FAILURE).sendToTarget();
+				 callerHandler.obtainMessage(CONNECTION_STATUS,
+				 CONNECTION_FAILURE).sendToTarget();
 				// save the devcice as null
-				// device = null;
+				 device = null;
 
 				LogMsg("Error:Unable to obtain socket from server_socket- " + e);
 				break;
@@ -156,19 +164,24 @@ public class ServerThread extends Thread {
 
 			// If a connection was accepted
 			if (socket != null) {
+				
+				// Save the device that has been connected to.
+				device = socket.getRemoteDevice();
+
+				LogMsg("Connection from the Client device is accepted successfuly");
+				//if(device != null)
+				//		LogMsg("HERE:device=" + device.getName());
+				
 				// Notify the caller that connection has been created, using
 				// Handler.
 				callerHandler.obtainMessage(CONNECTION_STATUS,
 						CONNECTION_SUCCESS).sendToTarget();
 
-				// Save the device that has been connected to.
-				device = socket.getRemoteDevice();
-
-				LogMsg("Connection from the Client device is accepted successfuly");
-
 			}
 
 		}// end of while() loop
+		
+		
 
 	}
 
@@ -176,6 +189,9 @@ public class ServerThread extends Thread {
 	 * @return BluetoothSocket object of the successful connection.
 	 */
 	public BluetoothSocket getSocket() {
+
+		//LogMsg("INSIDE:getSocket");
+		
 		return socket;
 	}
 
@@ -183,6 +199,9 @@ public class ServerThread extends Thread {
 	 * @return BluetoothDevice object of the successful connection.
 	 */
 	public BluetoothDevice getDevice() {
+
+		//LogMsg("INSIDE:getDevice");
+		
 		return device;
 	}
 
@@ -191,6 +210,9 @@ public class ServerThread extends Thread {
 	 * socket.
 	 */
 	public void stopConnection() {
+
+		//LogMsg("INSIDE:stopConnection");
+		
 
 		try {
 			socket.close();
@@ -207,6 +229,9 @@ public class ServerThread extends Thread {
 	 * Will cancel the listening socket, and cause the thread to finish.
 	 */
 	public void cancel() {
+
+		//LogMsg("INSIDE:cancel");
+		
 		try {
 			server_socket.close();
 			LogMsg("server_socket has been closed");

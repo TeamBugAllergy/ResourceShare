@@ -38,13 +38,13 @@ public class RemoteSeekerDevice {
 	/**
 	 * Device to be connected to.
 	 */
-	private static BluetoothDevice device = null;
+	public static BluetoothDevice device = null;
 
 	/**
 	 * Socket used for connection and communication between local device and
 	 * Remote Device.
 	 */
-	private static BluetoothSocket socket = null;
+	public static BluetoothSocket socket = null;
 
 	/**
 	 * Object of ServerThread. It used for connecting and obtaining socket.
@@ -69,6 +69,21 @@ public class RemoteSeekerDevice {
 
 			if (msg.what == ServerThread.CONNECTION_STATUS) {
 				if (msg.obj.equals(ServerThread.CONNECTION_SUCCESS)) {
+					
+					//LogMsg("INSIDE:CONNECTION_SUCCESS");
+					
+					// get the socket object of connection
+					socket = server.getSocket();
+
+					//if(socket != null)
+					//	LogMsg("CHECK:socket is not null");
+					
+					//if(server.getSocket() != null)
+						//LogMsg("HERE:socket=" + server.getSocket().toString());
+					
+					// Save the device that has been connected to.
+					device = server.getDevice();
+					
 					// Notify the caller that successfully obtained a
 					// connection.
 					callerHandler.obtainMessage(
@@ -76,21 +91,19 @@ public class RemoteSeekerDevice {
 							RemoteSeekerDevice.CONNECTION_SUCCESS)
 							.sendToTarget();
 
-					// get the socket object of connection
-					socket = server.getSocket();
-
-					// Save the device that has been connected to.
-					device = server.getDevice();
 
 				} else if (msg.obj.equals(ServerThread.CONNECTION_FAILURE)) {
+					
+					//LogMsg("INSIDE:CONNECTION_FAILURE");
+					
+					// save the devcice as null
+					device = null;
+					
 					// Notify the caller that failed to obtain a connection.
 					callerHandler.obtainMessage(
 							RemoteSeekerDevice.CONNECTION_STATUS,
 							RemoteSeekerDevice.CONNECTION_FAILURE)
 							.sendToTarget();
-
-					// save the devcice as null
-					device = null;
 				}
 
 			}
@@ -110,8 +123,10 @@ public class RemoteSeekerDevice {
 	 */
 	public RemoteSeekerDevice(Handler handler) {
 
+		//LogMsg("INSIDE:RemoteSeekerDevice");
+		
 		LogMsg("");
-
+		
 		// device to be connected to.
 		// This will have the BluetoothDevice after a successful connection.
 		this.device = null;
@@ -130,6 +145,9 @@ public class RemoteSeekerDevice {
 	 *         obtained or <b>false</b> on error.
 	 */
 	public Boolean obtainServerSocket() {
+		
+		//LogMsg("INSIDE:obtainServerSocket");
+		
 		// try to obtain a server_socket
 		BluetoothServerSocket server_socket = server.getServerSocket();
 		if (server_socket == null)
@@ -145,11 +163,16 @@ public class RemoteSeekerDevice {
 	 */
 	public void startListeningToDevice() {
 
+		//LogMsg("INSIDE:startListeningToDevice");
+		
 		// Listen to request from the remote seeker device.
 		// The result or status of the connection is sent through message by
 		// the ServerThread.
 		// RESULT OF CONNECTION WILL BE SENT TO CALLER LATER.(By Handler)
-		server.start();
+		
+		//only if the thread is not started
+		if( !server.isAlive() )
+			server.start();
 
 	}
 
@@ -157,6 +180,9 @@ public class RemoteSeekerDevice {
 	 * Closes the server_socket object and there by finishes the ServerThread.
 	 */
 	public void stopListeningToDevice() {
+		
+		//LogMsg("INSIDE:stopListeningToDevice");
+		
 		server.cancel();
 	}
 
@@ -166,6 +192,9 @@ public class RemoteSeekerDevice {
 	 * @return <b>device</b> of RemoteProviderDevice object.
 	 */
 	public BluetoothDevice getDevice() {
+		
+		//LogMsg("INSIDE:getDevice");
+		
 		return device;
 	}
 
@@ -177,6 +206,9 @@ public class RemoteSeekerDevice {
 	 *         connection.
 	 */
 	public BluetoothSocket getSocket() {
+		
+		//LogMsg("INSIDE:getSocket");
+		
 		// Return the socket of connection
 		return socket;
 	}
@@ -186,10 +218,13 @@ public class RemoteSeekerDevice {
 	 * socket.
 	 */
 	public void stopConnection() {
+		
+		//LogMsg("INSIDE:stopConnection");
+		
 		server.stopConnection();
 	}
 
-	private void LogMsg(String msg) {
+	private static void LogMsg(String msg) {
 		Log.d("RemoteProviderDevice", msg);
 	}
 }

@@ -2,6 +2,7 @@ package com.teambugallergy.resourceshare;
 
 import com.teambugallergy.resourceshare.bluetooth.ConnectedDevice;
 import com.teambugallergy.resourceshare.bluetooth.RemoteSeekerDevice;
+import com.teambugallergy.resourceshare.bluetooth.ServerThread;
 import com.teambugallergy.resourceshare.constants.Resources;
 
 import android.app.Activity;
@@ -45,9 +46,8 @@ public class ProviderActivity extends Activity implements OnClickListener {
 	/**
 	 * Resource Id of the requested resource.
 	 */
-	private static int ResourceId = -1; 
-		
-	
+	private static int ResourceId = -1;
+
 	/**
 	 * Dialog to display 'listenign for rquests' dialog. Dialog will be
 	 * terminated once a device is found.
@@ -57,7 +57,7 @@ public class ProviderActivity extends Activity implements OnClickListener {
 	/**
 	 * Context of this Activity used by any inner classes
 	 */
-	 private static Context providerActivityContext;
+	private static Context providerActivityContext;
 
 	/**
 	 * An object that represents the remote seeker device. Any operations to be
@@ -95,15 +95,26 @@ public class ProviderActivity extends Activity implements OnClickListener {
 				// if the connection was successful
 				if (msg.obj.equals(RemoteSeekerDevice.CONNECTION_SUCCESS)) {
 
-					// ***STOP LISTENING TO FURTHRE REQUESTS FROM OTHER SEEKER
-					// DEVICES***
-					seeker_device.stopListeningToDevice();
-
+					//LogMsg("INSIDE:CONNECTION_SUCCESS");
+			
+					//if(seeker_device != null)
+						//LogMsg("HERE:seeker_device is not null");
+					
+					//if(seeker_device.getSocket() != null)
+						//LogMsg("HERE:socket=" + seeker_device.getSocket().toString());
+			
+					//******************************
+					//Because THERE WAS A PROBLEM WITH seeker_device.getSocket and getDevice, THEY WERE null :)
+					//So directly use the ServerThread's socket
+					//******************************
+					seeker_device.socket = ServerThread.socket;
+					seeker_device.device = ServerThread.socket.getRemoteDevice();
+			
 					// Create a connected device using this connection.
 					connected_device = new ConnectedDevice(
 							seeker_device.getDevice(),
 							seeker_device.getSocket(), providerActivityHandler);
-
+					
 					// Display the device information to user
 					connected_device_info.setText("Device: "
 							+ connected_device.getDevice().getName());
@@ -117,9 +128,16 @@ public class ProviderActivity extends Activity implements OnClickListener {
 					// don't close the dialog. just change the contents to show
 					// that it is waiting for ResourceId from the connected
 					// seeker device
-
+					
 					dialog.changeTitle("Waiting for Resource Id...");
 					dialog.changeDialog("Please wait till a resource is requested.");
+
+					// read the Resource Id from connected_device
+
+					// read the data
+					// data read will be sent through messages
+					//call stopReceivingData() when expected dta has been read
+					connected_device.ReceiveData();
 
 					LogMsg("Detected device: "
 							+ connected_device.getDevice().getName());
@@ -127,6 +145,8 @@ public class ProviderActivity extends Activity implements OnClickListener {
 				// if the connection was failed
 				else if (msg.obj.equals(RemoteSeekerDevice.CONNECTION_FAILURE)) {
 
+					//LogMsg("INSIDE:CONNECTION_FAILURE");
+					
 					// Clear the TextView
 					connected_device_info.setText("");
 
@@ -137,6 +157,8 @@ public class ProviderActivity extends Activity implements OnClickListener {
 					// Display the OK Button
 					dialog.showOkButton(true);
 
+					//TODO: Restart the process of listening to devices.
+					
 					LogMsg("No device found.");
 				}
 
@@ -145,57 +167,80 @@ public class ProviderActivity extends Activity implements OnClickListener {
 			// REQUESTING_RESOURCE_ID
 			// After receiving such message just close the waiting dialog and
 			// display a confirm dialog to seek the permission of user
-			
-			//TODO: If the user selects 'NO' then just close the confirm message and start waiting for ResourceId again.
-			if(msg.what == Resources.REQUESTING_RESOURCE_ID)
-			{
-				//Stop or close the waiting dialog
-				dialog.dismiss();
+
+			// TODO: If the user selects 'NO' then just close the confirm
+			// message and start waiting for ResourceId again.
+			else if (msg.what == Resources.REQUESTING_RESOURCE_ID) {
 				
-				//msg.obj has the requested ResourceId, extract it and save it 
+				//LogMsg("INSIDE:REQUEST_RESOURCE_ID");
+				
+				// Stop or close the waiting dialog
+				dialog.closeDialog();
+				
+				// msg.obj has the requested ResourceId, extract it and save it
 				ResourceId = Integer.parseInt(msg.obj.toString());
+
+				LogMsg("ResourceId has been received :)." + ResourceId);
+
+				//to terminate the thread
+				//connected_device.stopReceivingData();
 				
-				//TODO:check for availability of that ResourceId and if it is available, hold it 
-				//TODO: if(ResourceAvailable) {
-				//and then 
-				//display a confirm message
-				AlertDialog confirmResourceId =new AlertDialog.Builder(providerActivityContext) 
-		        //set message, title, and icon
-		        .setTitle("Accept") 
-		        .setMessage("Are you willing to share the resource_name.") 
-
-		        .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-
-		            public void onClick(DialogInterface dialog, int whichButton) { 
-		                //TODO:send a message to SeekerDevice telling that ResourceId is available and Provider is willing to share the resource
-		            	
-		            	LogMsg("Resource is available and accepted to share.");
-		                dialog.dismiss();
-		            }   
-
-		        })
-
-		        .setNegativeButton("No", new DialogInterface.OnClickListener() {
-		            public void onClick(DialogInterface dialog, int which) {
-		            	//TODO:send a message to SeekerDevice telling that Provider is NOT WILLING  to share the resource.
-		            	//and close this confirm dialog and start listening to ResourceId requests
-		            	
-		            	LogMsg("Resource is not available or not present.");
-		                dialog.dismiss();
-
-		            }
-		        })
-		        .create();
 				
-			
-			//}else ResourceId is Unavailable
-				//{
-					//TODO:send the message that tells the seeker that ResourceId is not available
-					//and close this confirm dialog and start listening to ResourceId requests
-				
-				//}
-			}
-			
+				// TODO:check for availability of that ResourceId and if it is
+				// available, hold it
+				// TODO: if(ResourceAvailable) {
+				// and then
+				// display a confirm message
+		/*		AlertDialog confirmResourceId = new AlertDialog.Builder(
+						providerActivityContext)
+						// set message, title, and icon
+						.setTitle("Accept")
+						.setMessage(
+								"Are you willing to share the resource_name.")
+
+						.setPositiveButton("Yes",
+								new DialogInterface.OnClickListener() {
+
+									public void onClick(DialogInterface dialog,
+											int whichButton) {
+										// TODO:send a message to SeekerDevice
+										// telling that ResourceId is available
+										// and Provider is willing to share the
+										// resource
+
+										LogMsg("Resource is available and accepted to share.");
+										dialog.dismiss();
+									}
+
+								})
+
+						.setNegativeButton("No",
+								new DialogInterface.OnClickListener() {
+									public void onClick(DialogInterface dialog,
+											int which) {
+										// TODO:send a message to SeekerDevice
+										// telling that Provider is NOT WILLING
+										// to share the resource.
+										// and close this confirm dialog and
+										// start listening to ResourceId
+										// requests
+
+										LogMsg("Resource is not available or not present.");
+										dialog.dismiss();
+
+									}
+								}).create();
+
+				// }else ResourceId is Unavailable
+				// {
+				// TODO:send the message that tells the seeker that ResourceId
+				// is not available
+				// and close this confirm dialog and start listening to
+				// ResourceId requests
+
+				// }
+			*/}
+
 		}
 
 	};
@@ -206,21 +251,50 @@ public class ProviderActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_provider);
 
+		//LogMsg("INSIDE:onCreate");
+		
 		// Context of this Activity used by inner classes
-		 providerActivityContext = this;
+		providerActivityContext = this;
 
 		// TextView to display the informaion about connected seeker device
 		connected_device_info = (TextView) findViewById(R.id.connected_device);
 
-		// TODO: onStart() will start listening to requests
-		seeker_device = new RemoteSeekerDevice(providerActivityHandler);
+		//below cals will be made in onResume()
+		//seeker_device = new RemoteSeekerDevice(providerActivityHandler);
+		//startListening();
 
+
+		// Untill that, Display the dialog object of CustomDialog
+		dialog = new CustomDialog(this, "Waitiing for request...",
+				"Listening for requests from devices. Please wait...");
+		// display the dialog
+		dialog.show();
+	}
+
+	/**
+	 * Starts listening for connection requests from seeker devieces and
+	 * displays a dialog with progressbar.
+	 */
+	private void startListening() {
+
+		//LogMsg("INSIDE:startListening");
+		
 		// start listening to rwquests
 		// ONLY if server_socket has been obtained successfully
 		if (seeker_device.obtainServerSocket() == true) {
 
-			startListening();
+			// Listen to request from the remote seeker device.
+			// The result or status of the connection is sent through message by
+			// the ServerThread.
+			// RESULT OF CONNECTION WILL BE SENT TO CALLER LATER.(By Handler)
+			seeker_device.startListeningToDevice();// stopListeningToDevice()
+													// when you get device(Only
+													// one device can be
+													// connected).
 
+			// This dialog will be closed automatically if the connection is
+			// successfull
+			// Else the OK button will be displayed.
 		}
 		// Display an error in Toast
 		else {
@@ -233,29 +307,15 @@ public class ProviderActivity extends Activity implements OnClickListener {
 
 	}
 
-	/**
-	 * Starts listening for connection requests from seeker devieces and
-	 * displays a dialog with progressbar.
-	 */
-	private void startListening() {
-		// Listen to request from the remote seeker device.
-		// The result or status of the connection is sent through message by
-		// the ServerThread.
-		// RESULT OF CONNECTION WILL BE SENT TO CALLER LATER.(By Handler)
-		seeker_device.startListeningToDevice();// stopListeningToDevice()
-												// when you get device(Only
-												// one device can be
-												// connected).
-
-		// Untill that, Display the dialog object of CustomDialog
-		dialog = new CustomDialog(this, "Waitiing for request...",
-				"Listening for requests from devices. Please wait...");
-		// display the dialog
-		dialog.show();
-
-		// This dialog will be closed automatically if the connection is
-		// successfull
-		// Else the OK button will be displayed.
+	@Override
+	protected void onResume() {
+		super.onResume();
+		
+		//LogMsg("INSIDE:onResume");
+		
+		seeker_device = new RemoteSeekerDevice(providerActivityHandler);
+		
+		startListening();
 	}
 
 	/**
@@ -265,9 +325,28 @@ public class ProviderActivity extends Activity implements OnClickListener {
 	protected void onStop() {
 		super.onStop();
 
+		//LogMsg("INSIDE:onStop");
+		
 		if (seeker_device != null) {
-			seeker_device.stopListeningToDevice();
+			
+			//Don't why, but below statement should not be called here
+			//seeker_device.stopListeningToDevice();
 		}
+		
+		//stop the reading thread
+		if(connected_device != null)
+		{
+			//no need of this
+			//connected_device.stopReceivingData();
+			
+			//BELOW STATEMENT SHOULD NOT BE CALLED UNTILL THE END OF RESOURCE SHARING 
+			//terminate the connection
+			//connected_device.disconnect();
+			//TODO: above statement must be called IN FUTURE
+		}
+		
+		//finish();
+		//LogMsg("Finished");
 	}
 
 	@Override

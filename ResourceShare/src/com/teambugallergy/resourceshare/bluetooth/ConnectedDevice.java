@@ -3,15 +3,10 @@ package com.teambugallergy.resourceshare.bluetooth;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Serializable;
-
-import com.teambugallergy.resourceshare.constants.Resources;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
-import android.os.Parcel;
-import android.os.Parcelable;
 import android.util.Log;
 
 /**
@@ -27,8 +22,18 @@ import android.util.Log;
  * 02-04-2014
  * @author Adiga
  */
-public class ConnectedDevice implements Parcelable, Serializable{
+public class ConnectedDevice {
 
+	/**
+	 * Thread which writes data to the Remote Device
+	 */
+	Thread writer;
+			
+	/**
+	 * Thread which reads data from the Remote Device
+	 */
+	Thread reader;
+			
 	/**
 	 * Device to be connected to.
 	 */
@@ -54,6 +59,11 @@ public class ConnectedDevice implements Parcelable, Serializable{
 	 */
 	private OutputStream output_stream = null;
 
+	/**
+	 * Flag used to stop the thread. It is set to true by stopReceivingData() method
+	 */
+	private Boolean stop = false;
+	
 	// -----------------------------------------------------------------------------------
 	
 	/**
@@ -66,6 +76,8 @@ public class ConnectedDevice implements Parcelable, Serializable{
 		
 		LogMsg("");
 
+		LogMsg("HERE:server- "+ socket +" device- " + device);
+		
 		// device to be connected to
 		this.device = device;
 
@@ -75,6 +87,8 @@ public class ConnectedDevice implements Parcelable, Serializable{
 		//Handler of the caller
 		this.callerHandler = handler;
 		
+		//Intialize the IO streams
+		initializeIOStreams();
 	}
 	
 	/**
@@ -95,7 +109,7 @@ public class ConnectedDevice implements Parcelable, Serializable{
 	 *         Returns <b>true</b> if input-output streams have been obtained successfully, else 
 	 *         returns <b>false</b>.
 	 */
-	public Boolean initializeIOStreams() {
+	private Boolean initializeIOStreams() {
 
 		// Get the input and output streams
 		try {
@@ -135,8 +149,7 @@ public class ConnectedDevice implements Parcelable, Serializable{
 	 */
 	public void sendData(final byte[] bytes) {
 
-		// Thread which writes data to the Remote Device
-		Thread writer = new Thread(new Runnable() {
+		writer = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
@@ -154,6 +167,7 @@ public class ConnectedDevice implements Parcelable, Serializable{
 							+ "- " + e);
 				}
 
+				LogMsg("Terminating the writing Thread");
 			}
 		});
 
@@ -170,8 +184,7 @@ public class ConnectedDevice implements Parcelable, Serializable{
 	 */
 	public void ReceiveData() {
 
-		// Thread which reads data from the Remote Device
-		Thread reader = new Thread(new Runnable() {
+		reader = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
@@ -182,7 +195,11 @@ public class ConnectedDevice implements Parcelable, Serializable{
 				String data = null;
 
 				// Keep listening to the input_stream until an exception occurs
+				// OR caller wants to stop receiving data
 				while (true) {
+				//while ( stop == false) {
+					
+					LogMsg("Waiting for data from " + device.getName());
 					try {
 						// Reads from the InputStream
 						bytes = input_stream.read(buffer);
@@ -191,7 +208,7 @@ public class ConnectedDevice implements Parcelable, Serializable{
 						data = new String(buffer, 0, bytes);
 
 						// Send the obtained bytes to the UI activity
-						callerHandler.obtainMessage(Resources.REQUESTING_RESOURCE_ID, bytes, -1, data).sendToTarget();
+						callerHandler.obtainMessage(Integer.parseInt(data), bytes, -1, data).sendToTarget();
 
 						LogMsg("Data received from " + device.getName() + ": "
 								+ data);
@@ -204,6 +221,7 @@ public class ConnectedDevice implements Parcelable, Serializable{
 					}
 				}
 
+				LogMsg("Terminating the reading Thread");
 			}// end of run()
 		});
 
@@ -212,54 +230,32 @@ public class ConnectedDevice implements Parcelable, Serializable{
 
 	}
 
+	/**
+	 * Called whenever the caller does not want to receive data.  
+	 */
+/*	public void stopReceivingData()
+	{
+		//It makes the 'stop' flag to 'true'
+		//which makes the while() loop in the ReceiveData() method to stop
+		//and terminates the thread
+		stop = true;
+		LogMsg("Stopped listening to data");
+	}
+*/	
+	/**
+	 * Closes the socket associated with the connection and terminates the connection.
+	 */
+	public void disconnect()
+	{
+		if(socket != null)
+			try {
+				socket.close();
+			} catch (IOException e) {
+				LogMsg("Error in closing the socket- " + e);
+			}
+	}
+	
 	private void LogMsg(String msg) {
 		Log.d("ConnectedDevice", msg);
 	}
-
-	//To make th objects praceable
-	@Override
-	public int describeContents() {
-		// Auto-generated method stub
-		return 0;
-	}
-
-	public ConnectedDevice(Parcel in) {
-		
-		//THE ORDER SHOULD BE SAME AS THAT OF writeToParcel()
-		// device to be connected to
-				this.device = (BluetoothDevice) in.readValue(null);
-
-				// socket of this obj
-				this.socket = (BluetoothSocket) in.readValue(null);
-				
-				//Handler of the caller
-				this.callerHandler = (Handler) in.readValue(null);;
-	}
-	
-	/**
-	 * Making the object of ConnectedDevice into an parceable object.
-	 */
-	@Override
-	public void writeToParcel(Parcel dest, int flags) {
-		
-		//THE ORDER SHOULD BE SAME AS THAT OF ConnectedDevice(Parcel in)
-		
-		//current BluetoothDevice
-		dest.writeValue(device);
-		//current BluetoothSocket
-		dest.writeValue(socket);
-		//Handler of the caller
-		dest.writeValue(callerHandler);
-	}
-	
-	//I don't know what below code does :P
-	public static final Parcelable.Creator<ConnectedDevice> CREATOR = new Parcelable.Creator<ConnectedDevice>() {
-        public ConnectedDevice createFromParcel(Parcel in) {
-            return new ConnectedDevice(in);
-        }
-        
-        public ConnectedDevice[] newArray(int size) {
-            return new ConnectedDevice[size];
-        }
-	};
 }
