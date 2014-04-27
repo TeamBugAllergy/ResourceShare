@@ -265,7 +265,7 @@ public class ProviderActivity extends Activity implements OnClickListener {
 
 
 		// Untill that, Display the dialog object of CustomDialog
-		dialog = new CustomDialog(this, "Waitiing for request...",
+		dialog = new CustomDialog(this, "Waiting for request...",
 				"Listening for requests from devices. Please wait...");
 		// display the dialog
 		dialog.show();

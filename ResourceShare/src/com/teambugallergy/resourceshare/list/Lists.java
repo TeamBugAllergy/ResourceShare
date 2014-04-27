@@ -2,6 +2,8 @@ package com.teambugallergy.resourceshare.list;
 
 import java.util.ArrayList;
 
+import com.teambugallergy.resourceshare.SeekerActivity;
+
 import android.util.Log;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -76,7 +78,7 @@ public class Lists {
 		// add that object to list.
 		items.add(row1);
 		adapter.notifyDataSetChanged();
-
+		
 	}
 
 	/**
@@ -118,13 +120,21 @@ public class Lists {
 			list.getChildAt(index).setBackgroundResource(color_id);
 			adapter.notifyDataSetChanged();
 		}
-
+		
 	}
 
 	/**
 	 * Clears all the rows in the list
 	 */
 	public void clear() {
+		
+		//reset the color of all the item positions in the list
+		for(int i=0; i < list.getCount(); i++)
+			{
+				if( list.getItemAtPosition(i) != null)
+					changeColor(SeekerActivity.WHITE, i);
+			}
+		
 		// remove all the rows
 		items.clear();
 		adapter.notifyDataSetChanged();

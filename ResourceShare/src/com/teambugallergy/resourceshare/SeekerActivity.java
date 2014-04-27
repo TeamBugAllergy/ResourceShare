@@ -67,8 +67,9 @@ public class SeekerActivity extends Activity implements OnClickListener,
 	/**
 	 * Used for background color of each row.
 	 */
-	private static int RED;
-	private static int GREEN;
+	public static int WHITE;
+	public static int RED;
+	public static int GREEN;
 
 	/**
 	 * Refresh Button to Restart the scanning for devices.
@@ -76,10 +77,11 @@ public class SeekerActivity extends Activity implements OnClickListener,
 	private Button refresh;
 
 	/**
-	 * Button to goto next Activity along with the an array of ConnectedDevices objects
+	 * Button to goto next Activity along with the an array of ConnectedDevices
+	 * objects
 	 */
 	private static Button next;
-	
+
 	/**
 	 * List objcet that has methods for addItem, removeItem and
 	 * onItemClickListners for List Items
@@ -104,8 +106,8 @@ public class SeekerActivity extends Activity implements OnClickListener,
 	private static BluetoothDevice[] device_list;
 
 	/**
-	 * An array of BluetoothDevices that are transfered to next Activity.
-	 * This member is used by ResourceListActivity also.
+	 * An array of BluetoothDevices that are transfered to next Activity. This
+	 * member is used by ResourceListActivity also.
 	 */
 	public static ConnectedDevice[] connected_device_list;
 
@@ -157,28 +159,54 @@ public class SeekerActivity extends Activity implements OnClickListener,
 
 				// for each device in the array,
 				for (int i = 0; device_list[i] != null; i++) {
-					// if the device is not null,
-					// add the new device_list[] into list
-					list.addItem(new String[] { device_list[i].getName(),
-							SeekerActivity.STATUS_UNKOWN, "0" });
 
-					// set the color of the row to WHITE
-					// list.changeColor(SeekerActivity.WHITE, i); HERE
-					// BACKGROUND CANNOT BE SET,because the view will not be
-					// visible yet.
+					// serach connected_device_list[] for device_list[i]
+					int flag = 0;
+					for (int j = 0; connected_device_list[j] != null; j++) {
+						// if connected+device_list[] has this device
+						if (connected_device_list[j].getDevice().equals(
+								device_list[i])) {
+							LogMsg("device already present in connected_device_list[]");
+							flag = 1;
+							break;
+						}
+					}
+					if (flag == 0) {
+						// if the device is not null,
+						// add the new device_list[] into list
+						list.addItem(new String[] { device_list[i].getName(),
+								SeekerActivity.STATUS_UNKOWN, "0" });
 
-					// and tell the adapter about changes
-					// list.notifyDataSetChanged(); NO NEED, it has been added
-					// in list object
+						// and tell the adapter about changes
+						// list.notifyDataSetChanged(); NO NEED, it has been
+						// added
+						// in list object
 
-					LogMsg("device:" + device_list[i].getName());
+						LogMsg("device:" + device_list[i].getName());
+					} else {
+						// if the device is not null,
+						// add the new device_list[] into list
+						list.addItem(new String[] { device_list[i].getName(),
+								SeekerActivity.STATUS_CONNECTED, "1" });
 
+						LogMsg("HERE:changing the color to green");
+
+						// set the color of the row to GREEN
+						list.changeColor(SeekerActivity.GREEN, i);
+
+						// and tell the adapter about changes
+						// list.notifyDataSetChanged(); NO NEED, it has been
+						// added
+						// in list object
+
+						LogMsg("connected device:" + device_list[i].getName());
+					}
 				}
 
 			}
 
 			// if the message is from RemoteProviderDevice
-			if (msg.what == RemoteProviderDevice.CONNECTION_STATUS) {
+			else if (msg.what == RemoteProviderDevice.CONNECTION_STATUS) {
 				// if the connection was successful
 				if (msg.obj.equals(RemoteProviderDevice.CONNECTION_SUCCESS)) {
 
@@ -223,12 +251,12 @@ public class SeekerActivity extends Activity implements OnClickListener,
 							"Connected to the device.", Toast.LENGTH_SHORT)
 							.show();
 
-					//Also set the visibilty of 'Next' button, if it is not already visible
-					if( !next.isShown() )
-					{
+					// Also set the visibilty of 'Next' button, if it is not
+					// already visible
+					if (!next.isShown()) {
 						next.setVisibility(View.VISIBLE);
 					}
-					
+
 				}
 				// if the connection was failed
 				else if (msg.obj
@@ -278,6 +306,7 @@ public class SeekerActivity extends Activity implements OnClickListener,
 		setContentView(R.layout.activity_seeker);
 
 		// SET THE COLORS RESOURCE IDs OF CONSTANTS
+		WHITE = R.color.list_background_white;
 		RED = R.color.list_background_red;
 		GREEN = R.color.list_background_green;
 
@@ -285,10 +314,10 @@ public class SeekerActivity extends Activity implements OnClickListener,
 		refresh = (Button) findViewById(R.id.refresh);
 		refresh.setOnClickListener(this);
 
-		//Button to goto next Activity
+		// Button to goto next Activity
 		next = (Button) findViewById(R.id.next);
 		next.setOnClickListener(this);
-		
+
 		// Get a reference to ListView from layout file
 		ListView l = (ListView) findViewById(R.id.list);
 
@@ -308,8 +337,8 @@ public class SeekerActivity extends Activity implements OnClickListener,
 		scanner = new Scanner(seekerActivityHandler);
 
 		// Array of connected devices to be passed to next activity
-		//below statement is put in onStart
-		//connected_device_list = new ConnectedDevice[MAX_CONNECTED_DEVICES];
+		// below statement is put in onStart
+		// connected_device_list = new ConnectedDevice[MAX_CONNECTED_DEVICES];
 
 		seekerActivityContext = this;
 
@@ -411,33 +440,31 @@ public class SeekerActivity extends Activity implements OnClickListener,
 			LogMsg("Restarted the scanning process.");
 
 		}
-		
-		//Stop scanning for devices
-		// and goto next ResourceListActivity along with array of ConnectedDevices objects.
-		if(v.getId() == next.getId())
-		{
-			//if there is one or more connected devices,
-			//if(connected_device_list[0] != null) OR
-			if(connected_device_num > 0)
-			{
+
+		// Stop scanning for devices
+		// and goto next ResourceListActivity along with array of
+		// ConnectedDevices objects.
+		if (v.getId() == next.getId()) {
+			// if there is one or more connected devices,
+			// if(connected_device_list[0] != null) OR
+			if (connected_device_num > 0) {
 				Intent i = new Intent(this, ResourceListActivity.class);
 
-				//PROBLEM IN SENDING THE connected_device_list[] THROUGH INTENTS
-				//So connected_device_list[] has been made public and static
+				// PROBLEM IN SENDING THE connected_device_list[] THROUGH
+				// INTENTS
+				// So connected_device_list[] has been made public and static
 				startActivity(i);
-				//finish()
-			}
-			else
-			{
-				Toast.makeText(this, "No device is connected.", Toast.LENGTH_LONG)
-				.show();
-				
+				// finish()
+			} else {
+				Toast.makeText(this, "No device is connected.",
+						Toast.LENGTH_LONG).show();
+
 				LogMsg("ERROR:connected_device_list has no connected devices.");
 			}
-			
+
 		}
 	}
-	
+
 	/**
 	 * Start / Restart scanning once this activity starts
 	 */
@@ -446,7 +473,7 @@ public class SeekerActivity extends Activity implements OnClickListener,
 		super.onStart();
 
 		LogMsg("INSIDE:onStart");
-		
+
 		// only if scanner is currently scanning
 		if (scanner.isScanning() == true) {
 			// stop the scanning first
@@ -457,17 +484,18 @@ public class SeekerActivity extends Activity implements OnClickListener,
 
 		Toast.makeText(this, "Searching for devices...", Toast.LENGTH_LONG)
 				.show();
-		
-		//hide the 'next' button
+
+		// hide the 'next' button
 		next.setVisibility(View.GONE);
-		
+
 		// Array of connected devices to be passed to next activity
 		connected_device_list = new ConnectedDevice[MAX_CONNECTED_DEVICES];
-		//Global index for connected_device_list[] array. It is incremented each time a successfully connected device is added.
+		// Global index for connected_device_list[] array. It is incremented
+		// each time a successfully connected device is added.
 		connected_device_num = 0;
-		
+
 		LogMsg("Started the scanning process.");
-		
+
 	}
 
 	/**
@@ -499,7 +527,22 @@ public class SeekerActivity extends Activity implements OnClickListener,
 		}
 
 	}
-	
+
+	/**
+	 * Stop scanning for devices once this activity stops
+	 */
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+
+		// only if scanner is not yet started scanning
+		if (scanner.isScanning() == true) {
+			// stop scanning for devices
+			scanner.stopScanningForDevices(this);
+		}
+
+	}
+
 	private static void LogMsg(String msg) {
 		Log.d("SeekerActivity", msg);
 	}

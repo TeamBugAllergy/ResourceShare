@@ -76,7 +76,7 @@ public class ConnectedDevice {
 		
 		LogMsg("");
 
-		LogMsg("HERE:server- "+ socket +" device- " + device);
+		//LogMsg("HERE:server- "+ socket +" device- " + device);
 		
 		// device to be connected to
 		this.device = device;
