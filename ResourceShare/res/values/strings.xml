@@ -15,4 +15,10 @@
     
     <string name="next">Next</string>
     
+    <string name="flash">Flash</string>
+    <string name="camera">Camera</string>
+    <string name="wifi">Wifi</string>
+    <string name="gps">GPS</string>
+    <string name="request_resource">Request</string>
+    
 </resources>

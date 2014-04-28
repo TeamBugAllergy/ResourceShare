@@ -1,6 +1,5 @@
 package com.teambugallergy.resourceshare.resources;
 
-import com.teambugallergy.resourceshare.constants.Resources;
 
 /**
  * This class has methods general to all the flashes.
