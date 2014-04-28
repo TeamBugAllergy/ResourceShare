@@ -2,7 +2,7 @@ package com.teambugallergy.resourceshare.list;
 
 import java.util.ArrayList;
 
-import com.teambugallergy.resourceshare.SeekerActivity;
+import com.teambugallergy.resourceshare.activities.SeekerActivity;
 
 import android.util.Log;
 import android.widget.BaseAdapter;

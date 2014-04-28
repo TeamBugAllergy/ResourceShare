@@ -92,6 +92,15 @@ public class ConnectedDevice {
 	}
 	
 	/**
+	 * Sets the new <i>handler</i> as the <i>callerHandler</i> of this object. 
+	 * @param handler
+	 */
+	public void setCallerHandler(Handler handler)
+	{
+		callerHandler = handler;
+	}
+	
+	/**
 	 * Gets object of BluetoothDevice that is stored as <i>device</i>. 
 	 * @return <b>device</b> of ConnectedDevice object.
 	 */
@@ -182,7 +191,7 @@ public class ConnectedDevice {
 	 * Creates a new Thread and reads the data buffer[] from the Remote Device
 	 * through that Thread.
 	 */
-	public void ReceiveData() {
+	public void receiveData() {
 
 		reader = new Thread(new Runnable() {
 
@@ -207,11 +216,14 @@ public class ConnectedDevice {
 						// data in String form
 						data = new String(buffer, 0, bytes);
 
+						//TODO: data contains <what:data> formate separate 'what' and 'data' from it
+						String[] data_values = data.split(":");
+
 						// Send the obtained bytes to the UI activity
-						callerHandler.obtainMessage(Integer.parseInt(data), bytes, -1, data).sendToTarget();
+						callerHandler.obtainMessage(Integer.parseInt(data_values[0]), bytes, -1, data_values[1]).sendToTarget();
 
 						LogMsg("Data received from " + device.getName() + ": "
-								+ data);
+								+ data_values[0] +","+ data_values[1]);
 
 					} catch (IOException e) {
 						LogMsg("Data received completely from "
