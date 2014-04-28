@@ -176,7 +176,8 @@ public class ProviderActivity extends Activity implements OnClickListener {
 				// LogMsg("INSIDE:REQUEST_RESOURCE_ID");
 
 				// Stop or close the waiting dialog
-				dialog.closeDialog();
+				//these statements are put inside if(resource_available){} block
+				//dialog.closeDialog();
 
 				// msg.obj has the requested resource_id, extract it and save it
 				resource_id = Integer.parseInt(msg.obj.toString());
@@ -203,11 +204,17 @@ public class ProviderActivity extends Activity implements OnClickListener {
 					resource_availability = -1;
 					break;
 				}
-				// TODO:
+				
+				LogMsg("Resource availability:" + resource_availability);
+				
+				//Resource is Available
 				if (resource_availability == Resources.RESOURCE_AVAILABLE) {
 
 					// if it is available,
-					// display a confirm message
+					// Stop or close the waiting dialog
+					dialog.closeDialog();
+					
+					// and display a confirm message
 					AlertDialog confirmResourceId = new AlertDialog.Builder(
 							providerActivityContext)
 							// set message, title, and icon
@@ -264,7 +271,7 @@ public class ProviderActivity extends Activity implements OnClickListener {
 											// TODO:start listening to
 											// resource_id
 											// requests again.
-											LogMsg("Resource is not available or not present.");
+											LogMsg("Sending message to Seeker:'Resource is available but rejected to share.'");
 											dialog.dismiss();
 
 										}
@@ -274,17 +281,48 @@ public class ProviderActivity extends Activity implements OnClickListener {
 					confirmResourceId.show();
 
 				}
-				// resource_id is Unavailable
-				else {
-					LogMsg("Resource availability:" + resource_availability);
-
+				// Resource is Unavailable
+				else if(resource_availability == Resources.RESOURCE_UNAVAILABLE)
+				{
 					// TODO:send the message that tells the seeker that
 					// resource_id
 					// is not available
+					//and tell the user at Provider end that Seeker has requested a Resource which is Not Present, 
 					// and close this confirm dialog and start listening to
-					// resource_id requests
+					// resource_id requests again
 
+					//send the RESOURCE_UNAVAILABLE message
+					connected_device
+					.sendData((Resources.RESOURCE_STATUS
+							+ ":" + Resources.RESOURCE_UNAVAILABLE)
+							.getBytes());
+					LogMsg("Sending message to Seeker:'Resource is not present on the provider device.'");
+					
+					Toast.makeText(providerActivityContext, "Requested resource is not present.Waiting for other Resource Id.", Toast.LENGTH_LONG).show();
+					//TODO: Check- connected_device.receiveData();
+					
 				}
+				//Resource is Busy
+				else if(resource_availability == Resources.RESOURCE_BUSY)
+				{
+					//TODO:send the message that tells the seeker that resource_id is currently busy
+					//and tell the user at the Provider end that Seeker has requested a Resource which is Busy,
+					//and close this confirm dialog and start listening to resource_id requests again
+					
+					//send the RESOURCE_BUSY message
+					connected_device
+					.sendData((Resources.RESOURCE_STATUS
+							+ ":" + Resources.RESOURCE_BUSY)
+							.getBytes());
+					LogMsg("Sending message to Seeker:'Resource is busy.'");
+					
+					Toast.makeText(providerActivityContext, "Requested resource is busy.Waiting for other Resource Id.", Toast.LENGTH_LONG).show();
+					//TODO: Check- connected_device.receiveData();
+					
+					
+				}
+					
+				
 			}
 
 		}
