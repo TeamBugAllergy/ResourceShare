@@ -45,6 +45,13 @@ public class ConnectedDevice {
 	 */
 	private BluetoothSocket socket = null;
 	
+	/**
+	 * Index of the ConnectedDevice object in connected_device_list[] array.
+	 * This index will be added to msg.arg2 of the message that has been read, and sent to ResourceListActivity.
+	 * Used by receiveData() to detect the sender of the message.
+	 */
+	private int device_index = -1;
+	
 	/** Handler of caller class
 	 * 
 	 */
@@ -92,6 +99,15 @@ public class ConnectedDevice {
 	}
 	
 	/**
+	 * Sets the device_index of this ConnectedDevice object to <i>index</i>.
+	 * @param index index of this object in connected_device_list[] array of ResourceListActivity.
+	 */
+	public void setDeviceIndex(int index)
+	{
+		device_index = index;
+	}
+	
+	/**
 	 * Sets the new <i>handler</i> as the <i>callerHandler</i> of this object. 
 	 * @param handler
 	 */
@@ -101,12 +117,30 @@ public class ConnectedDevice {
 	}
 	
 	/**
+	 * Gets the device_index of this ConnectedDevice object.
+	 * @return device_index i.e index of this object in connected_device_list[] array of ResourceListActivity.
+	 */
+	public int getDeviceIndex()
+	{
+		return device_index;
+	}
+	
+	/**
 	 * Gets object of BluetoothDevice that is stored as <i>device</i>. 
 	 * @return <b>device</b> of ConnectedDevice object.
 	 */
 	public BluetoothDevice getDevice()
 	{
 		return device;
+	}
+	
+	/**
+	 * Gets object of BluetoothSocket that is stored as <i>socket</i>. 
+	 * @return <b>socket</b> of this ConnectedDevice object.
+	 */
+	public BluetoothSocket getSocket()
+	{
+		return socket;
 	}
 	
 	/**
@@ -209,6 +243,7 @@ public class ConnectedDevice {
 				//while ( stop == false) {
 					
 					LogMsg("Waiting for data from " + device.getName());
+					
 					try {
 						// Reads from the InputStream
 						bytes = input_stream.read(buffer);
@@ -220,7 +255,8 @@ public class ConnectedDevice {
 						String[] data_values = data.split(":");
 
 						// Send the obtained bytes to the UI activity
-						callerHandler.obtainMessage(Integer.parseInt(data_values[0]), bytes, -1, data_values[1]).sendToTarget();
+						//device_index tells the callerHandler from which device, the data has been received.
+						callerHandler.obtainMessage(Integer.parseInt(data_values[0]), bytes, device_index, data_values[1]).sendToTarget();
 
 						LogMsg("Data received from " + device.getName() + ": "
 								+ data_values[0] +","+ data_values[1]);

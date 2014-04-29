@@ -53,10 +53,10 @@ public class SeekerActivity extends Activity implements OnClickListener,
 	// user
 
 	/**
-	 * Maximum of 5 devices can be stored in the connected_device_list[]. i.e
-	 * Maximum of 5 Resource Providers are allowed.
+	 * Maximum of 10 devices can be stored in the connected_device_list[]. i.e
+	 * Maximum of 10 Resource Providers are allowed.
 	 */
-	private final int MAX_CONNECTED_DEVICES = 5;
+	private final int MAX_CONNECTED_DEVICES = 10;
 
 	/**
 	 * Used to display the connection status of the device in the list.
