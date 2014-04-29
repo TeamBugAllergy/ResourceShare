@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<<<<<<< HEAD
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
@@ -62,3 +63,51 @@
     </LinearLayout>
 
 </ScrollView>
+=======
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+	<RadioGroup
+        android:id="@+id/resource_list_radio_group"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <RadioButton
+            android:id="@+id/resource_list_flash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:checked="true"
+            android:text="@string/flash"
+             />
+
+        <RadioButton
+            android:id="@+id/resource_list_wifi"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/wifi" />
+        
+        <RadioButton
+            android:id="@+id/resource_list_gps"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/gps" />
+        
+        <RadioButton
+            android:id="@+id/resource_list_camera"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/camera" />
+        
+    </RadioGroup>
+
+    <Button
+        	android:id="@+id/resource_list_request_button"
+     		android:layout_width="fill_parent"
+     		android:layout_height="wrap_content"
+     		android:text="@string/request_resource"
+     		android:layout_gravity="center_horizontal"/>
+    
+</LinearLayout>
+>>>>>>> fd9f47a389d161aa3eac65715c2a47002673e55c

@@ -16,7 +16,10 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+<<<<<<< HEAD
 import android.widget.TextView;
+=======
+>>>>>>> fd9f47a389d161aa3eac65715c2a47002673e55c
 import android.widget.Toast;
 
 /**
@@ -28,12 +31,15 @@ import android.widget.Toast;
  * @author Adiga 22-04-2014
  */
 public class ResourceListActivity extends Activity implements OnClickListener {
+<<<<<<< HEAD
 
 	/**
 	 * Maximum of 10 devices can be stored in the connected_device_list[]. i.e
 	 * Maximum of 10 Resource Providers are allowed.
 	 */
 	private final int MAX_CONNECTED_DEVICES = 10;
+=======
+>>>>>>> fd9f47a389d161aa3eac65715c2a47002673e55c
 
 	/**
 	 * Context of the ResourceListActivity
@@ -66,6 +72,7 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 	private Button request_resource;
 
 	/**
+<<<<<<< HEAD
 	 * A button that will be enabled only if atleast ONE POTENTIAL PROVIDER
 	 * device.
 	 */
@@ -86,6 +93,19 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 
 	// -----------------------------------------------------------------------------------
 	/**
+=======
+	 * A button to send the resource_requests to all the connected devices in the connected_device_list[]
+	 */
+	private Button request_resource;
+	
+	/**
+	 * Group of radio buttons. Each radio button will have a name of the resource to be requested.
+	 */
+	private RadioGroup resource_list_radio_group;
+	
+	// -----------------------------------------------------------------------------------
+	/**Testing
+>>>>>>> fd9f47a389d161aa3eac65715c2a47002673e55c
 	 * Handler to receive messages.
 	 */
 	private static Handler ResourceListActivityHandler = new Handler() {
@@ -93,6 +113,7 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 		public void handleMessage(Message msg) {
 
 			// if the message is from Scanner
+<<<<<<< HEAD
 			// IT ALSO ASSUMES RESOURCE_AVAILABLE condition.
 			// msg.arg2 will have the index of the ConnectedDevice object from
 			// which data has been received, in connected_device_list[].
@@ -177,18 +198,51 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 					Toast.makeText(resourceListActivityContext,
 							"Resource is busy so cannot be shared.",
 							Toast.LENGTH_LONG).show();
+=======
+			//IT ALSO ASSUMES RESOURCE_AVAILABLE condition.
+			if (msg.what == Resources.REQUEST_STATUS) 
+			{
+				if(Integer.parseInt(msg.obj.toString()) == Resources.REQUEST_ACCEPTED)
+				{
+					LogMsg("Provider has accepted to share the resource.");
+					Toast.makeText(resourceListActivityContext, "Provider has accepted to share the resource.", Toast.LENGTH_SHORT).show();
+				}
+				else if(Integer.parseInt(msg.obj.toString()) == Resources.REQUEST_REJECTED)
+				{
+					LogMsg("Provider has rejected to share the resource.");
+					Toast.makeText(resourceListActivityContext, "Provider has rejected to share the resource.", Toast.LENGTH_LONG).show();
+				}
+			}
+			if(msg.what == Resources.RESOURCE_STATUS)
+			{
+				if(Integer.parseInt(msg.obj.toString()) == Resources.RESOURCE_UNAVAILABLE)
+				{
+					LogMsg("Provider device doesn't have the resource so cannot be shared");
+					Toast.makeText(resourceListActivityContext, "Provider device doesn't have the resource so cannot be shared", Toast.LENGTH_LONG).show();
+				}
+				else if(Integer.parseInt(msg.obj.toString()) == Resources.RESOURCE_BUSY)
+				{
+					LogMsg("Resource is busy so cannot be shared.");
+					Toast.makeText(resourceListActivityContext, "Resource is busy so cannot be shared.", Toast.LENGTH_LONG).show();
+>>>>>>> fd9f47a389d161aa3eac65715c2a47002673e55c
 				}
 			}
 		}
 	};
+<<<<<<< HEAD
 
 	// -----------------------------------------------------------------------------------
 
+=======
+	// -----------------------------------------------------------------------------------
+	
+>>>>>>> fd9f47a389d161aa3eac65715c2a47002673e55c
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
 		LogMsg("INSIDE:onCreate");
+<<<<<<< HEAD
 
 		// set the layout for the activity
 		setContentView(R.layout.activity_resource_list);
@@ -209,10 +263,25 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 		resource_list_resource_status = (TextView) findViewById(R.id.resource_list_requested_resource_status);
 
 		// save the context
+=======
+		
+		// testing layout
+		setContentView(R.layout.activity_resource_list);
+		
+		//button to send the requests
+		request_resource = (Button)findViewById(R.id.resource_list_request_button);
+		request_resource.setOnClickListener(this);
+		
+		//radio button group
+		resource_list_radio_group = (RadioGroup) findViewById(R.id.resource_list_radio_group);
+		
+		//save the context
+>>>>>>> fd9f47a389d161aa3eac65715c2a47002673e55c
 		resourceListActivityContext = this;
 
 		// get the array of connected device objects
 		this.connected_device_list = SeekerActivity.getConnectedDeviceList();
+<<<<<<< HEAD
 
 		for (int i = 0; connected_device_list[i] != null; i++) {
 			// set the new Handler
@@ -290,6 +359,78 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 	 */
 	public static ConnectedDevice[] getPotentialDeviceList() {
 		return potential_provider_list;
+=======
+		
+		for(int i=0; connected_device_list[i] != null; i++)
+		{
+		//set the new Handler 
+		connected_device_list[i].setCallerHandler(ResourceListActivityHandler);
+		}
+				
+						
+	}
+
+	@Override
+	public void onClick(View arg0) {
+		//onClick of request_resource
+		if(arg0.getId() == request_resource.getId())
+		{
+			int i;
+			for( i=0; connected_device_list[i] != null; i++)
+			{
+				//always first element in the array will be 'what' of the data/message 
+				// request id is sent in the format- 'what:data'
+				// i.e REQUESTING_RESOURCE_ID:Resources.FLASH 
+				//testing connected_device_list[i].sendData( (Resources.REQUESTING_RESOURCE_ID + ":" + Resources.FLASH).getBytes() );
+				connected_device_list[i].sendData( (Resources.REQUESTING_RESOURCE_ID + ":" + getCheckedResourceId()).getBytes() );
+				
+				//start listening to REPLY from connected devices.
+				connected_device_list[i].receiveData();
+				
+				LogMsg("[" + i + "]:" + connected_device_list[i].getDevice().getName());
+			}
+			if(i ==0 )
+			{
+				LogMsg("No devices are connected");
+			}
+		}
+	}
+	
+	/**
+	 * Get the View Id of the checked radio button from the group and return the resource_id associatd with that resource.
+	 * @return resource_id of the checked resource.
+	 */
+	private int getCheckedResourceId()
+	{
+		int resource_id = 0;
+		
+		switch(resource_list_radio_group.getCheckedRadioButtonId())
+		{
+		case R.id.resource_list_flash:
+			resource_id = Resources.FLASH;
+			break;
+			
+		case R.id.resource_list_gps:
+			resource_id = Resources.GPS;
+			break;
+		
+		case R.id.resource_list_wifi:
+			resource_id = Resources.WIFI;
+			break;
+			
+		case R.id.resource_list_camera:
+			resource_id = Resources.CAMERA;
+			break;
+			
+		//TODO: other resources.	
+			
+		default:
+			resource_id = -1;
+			break;
+		}
+		
+		return resource_id;
+>>>>>>> fd9f47a389d161aa3eac65715c2a47002673e55c
 	}
 
 	/**
@@ -353,5 +494,9 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 	private static void LogMsg(String msg) {
 		Log.d("ResourceListActivity", msg);
 	}
+<<<<<<< HEAD
 
+=======
+	
+>>>>>>> fd9f47a389d161aa3eac65715c2a47002673e55c
 }
