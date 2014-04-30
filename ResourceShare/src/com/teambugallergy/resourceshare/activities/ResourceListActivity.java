@@ -69,7 +69,7 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 	 * A button that will be enabled only if atleast ONE POTENTIAL PROVIDER
 	 * device.
 	 */
-	private static Button resource_list_next;
+	private static Button resource_list_access_resource;
 
 	/**
 	 * A textview to display the status of the requeted resource in all the
@@ -129,9 +129,9 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 					potential_provider_num++;
 
 					// if the 'next' button is currently gone(hidden),
-					if (resource_list_next.getVisibility() == View.GONE) {
+					if (resource_list_access_resource.getVisibility() == View.GONE) {
 						// Show the button
-						resource_list_next.setVisibility(View.VISIBLE);
+						resource_list_access_resource.setVisibility(View.VISIBLE);
 					}
 
 				} else if (Integer.parseInt(msg.obj.toString()) == Resources.REQUEST_REJECTED) {
@@ -199,8 +199,8 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 
 		// button to goto next activity when atleast one Potential Provider has
 		// been found.
-		resource_list_next = (Button) findViewById(R.id.resource_list_next);
-		resource_list_next.setOnClickListener(this);
+		resource_list_access_resource = (Button) findViewById(R.id.resource_list_access_resource);
+		resource_list_access_resource.setOnClickListener(this);
 
 		// radio button group
 		resource_list_radio_group = (RadioGroup) findViewById(R.id.resource_list_radio_group);
@@ -262,8 +262,8 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 
 		}
 
-		// onClick of resource_list_next
-		else if (arg0.getId() == resource_list_next.getId()) {
+		// onClick of resource_list_access_resource
+		else if (arg0.getId() == resource_list_access_resource.getId()) {
 			resource_list_resource_status.setText("Potential providers:\n");
 
 			for (int i = 0; potential_provider_list[i] != null; i++) {
@@ -273,6 +273,11 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 			// If there is atleast one potential provider,
 			// then only goto next activity.
 			if (potential_provider_num > 0) {
+				
+				//TODO: create an object of resource specific activity
+				//TODO: set the callerHandler of objects in potential_provider_list[]  
+				
+				//TODO: send RESOURCE_ACCESS_REQUEST message to devices in potential_provider_list[]. 
 				// TODO: goto Resource Specific activity.
 				
 				//TODO@PG a package for Resource Specific Activities.
