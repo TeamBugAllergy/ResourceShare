@@ -169,7 +169,7 @@ public class ProviderActivity extends Activity implements OnClickListener {
 			// After receiving such message just close the waiting dialog and
 			// display a confirm dialog to seek the permission of user
 
-			// TODO: If the user selects 'NO' then just close the confirm
+			//If the user selects 'NO' then just close the confirm
 			// message and start waiting for resource_id again.
 			else if (msg.what == Resources.REQUESTING_RESOURCE_ID) {
 
@@ -228,7 +228,7 @@ public class ProviderActivity extends Activity implements OnClickListener {
 										public void onClick(
 												DialogInterface dialog,
 												int whichButton) {
-											// TODO:send a message to
+											// Send a message to
 											// SeekerDevice
 											// telling that resource_id is
 											// available
@@ -253,7 +253,7 @@ public class ProviderActivity extends Activity implements OnClickListener {
 										public void onClick(
 												DialogInterface dialog,
 												int which) {
-											// TODO:send a message to
+											// Send a message to
 											// SeekerDevice
 											// telling that Provider is NOT
 											// WILLING
@@ -268,7 +268,7 @@ public class ProviderActivity extends Activity implements OnClickListener {
 															+ ":" + Resources.REQUEST_REJECTED)
 															.getBytes());
 
-											// TODO:start listening to
+											//and start listening to
 											// resource_id
 											// requests again.
 											LogMsg("Sending message to Seeker:'Resource is available but rejected to share.'");
@@ -284,7 +284,7 @@ public class ProviderActivity extends Activity implements OnClickListener {
 				// Resource is Unavailable
 				else if(resource_availability == Resources.RESOURCE_UNAVAILABLE)
 				{
-					// TODO:send the message that tells the seeker that
+					// Send the message that tells the seeker that
 					// resource_id
 					// is not available
 					//and tell the user at Provider end that Seeker has requested a Resource which is Not Present, 
@@ -299,13 +299,13 @@ public class ProviderActivity extends Activity implements OnClickListener {
 					LogMsg("Sending message to Seeker:'Resource is not present on the provider device.'");
 					
 					Toast.makeText(providerActivityContext, "Requested resource is not present.Waiting for other Resource Id.", Toast.LENGTH_LONG).show();
-					//TODO: Check- connected_device.receiveData();
+					//No need:- connected_device.receiveData();
 					
 				}
 				//Resource is Busy
 				else if(resource_availability == Resources.RESOURCE_BUSY)
 				{
-					//TODO:send the message that tells the seeker that resource_id is currently busy
+					//Send the message that tells the seeker that resource_id is currently busy
 					//and tell the user at the Provider end that Seeker has requested a Resource which is Busy,
 					//and close this confirm dialog and start listening to resource_id requests again
 					
@@ -317,7 +317,7 @@ public class ProviderActivity extends Activity implements OnClickListener {
 					LogMsg("Sending message to Seeker:'Resource is busy.'");
 					
 					Toast.makeText(providerActivityContext, "Requested resource is busy.Waiting for other Resource Id.", Toast.LENGTH_LONG).show();
-					//TODO: Check- connected_device.receiveData();
+					//No need:- connected_device.receiveData();
 					
 					
 				}
