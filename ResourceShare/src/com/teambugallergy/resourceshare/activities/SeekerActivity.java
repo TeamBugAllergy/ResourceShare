@@ -290,6 +290,11 @@ public class SeekerActivity extends Activity implements OnClickListener,
 					// Display the OK Button
 					dialog.showOkButton(true);
 				}
+				//Unexpected messages
+				else
+				{
+					LogMsg("Unexpected message received in this Hnadler.");
+				}
 			}
 
 		}

@@ -3,10 +3,12 @@ package com.teambugallergy.resourceshare.activities;
 import com.teambugallergy.resourceshare.R;
 import com.teambugallergy.resourceshare.bluetooth.ConnectedDevice;
 import com.teambugallergy.resourceshare.constants.Resources;
+import com.teambugallergy.resourceshare.resources.Resource;
 
 import android.app.Activity;
 import android.bluetooth.BluetoothDevice;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -88,10 +90,12 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 	/**
 	 * Handler to receive messages.
 	 */
-	private static Handler ResourceListActivityHandler = new Handler() {
+	private static Handler resourceListActivityHandler = new Handler() {
 
 		public void handleMessage(Message msg) {
 
+			LogMsg("Message received");
+			
 			// if the message is from Scanner
 			// IT ALSO ASSUMES RESOURCE_AVAILABLE condition.
 			// msg.arg2 will have the index of the ConnectedDevice object from
@@ -121,10 +125,8 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 					// create an array of ConnectedDevice object which contains
 					// only POTENTIAL PROVIDER DEVICES using
 					// connected_device_list[]
-					potential_provider_list[potential_provider_num] = new ConnectedDevice(
-							connected_device_list[msg.arg2].getDevice(),
-							connected_device_list[msg.arg2].getSocket(),
-							ResourceListActivityHandler);
+					potential_provider_list[potential_provider_num] = connected_device_list[msg.arg2];
+					
 					//increment the index
 					potential_provider_num++;
 
@@ -149,7 +151,7 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 							Toast.LENGTH_LONG).show();
 				}
 			}
-			if (msg.what == Resources.RESOURCE_STATUS) {
+			else if (msg.what == Resources.RESOURCE_STATUS) {
 				// Sender BluetoothDevice object.
 				BluetoothDevice sender = connected_device_list[msg.arg2]
 						.getDevice();
@@ -178,6 +180,11 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 							"Resource is busy so cannot be shared.",
 							Toast.LENGTH_LONG).show();
 				}
+			}
+			//Unexpected messages
+			else
+			{
+				LogMsg("Unexpected message received in this Handler: msg.what=" + msg.what);
 			}
 		}
 	};
@@ -217,7 +224,7 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 		for (int i = 0; connected_device_list[i] != null; i++) {
 			// set the new Handler
 			connected_device_list[i]
-					.setCallerHandler(ResourceListActivityHandler);
+					.setCallerHandler(resourceListActivityHandler);
 			connected_device_list[i].setDeviceIndex(i);
 		}
 
@@ -274,14 +281,20 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 			// then only goto next activity.
 			if (potential_provider_num > 0) {
 				
-				//TODO: create an object of resource specific activity
-				//TODO: set the callerHandler of objects in potential_provider_list[]  
+				// goto Resource Specific activity.
+				Intent intent = new Resource().getIntetToResourceActivity(getCheckedResourceId(), this, 0);
+				startActivity(intent);
 				
-				//TODO: send RESOURCE_ACCESS_REQUEST message to devices in potential_provider_list[]. 
-				// TODO: goto Resource Specific activity.
+				/* below statements are put in Resource Specific Activity's onCreate() 
+				// send RESOURCE_ACCESS_REQUEST message to devices in potential_provider_list[].
+				for(int j=0; potential_provider_list[j] != null; j++)
+				{
+					LogMsg("sending the message RESOURCE_ACCESS_REQUEST");
 				
-				//TODO@PG a package for Resource Specific Activities.
-				//Write Resource specific classes in '*.resources' package.
+					//data in the form 'what:data' i.e 'RESOURCE_ACCESS_REQUEST:resource_id'
+					potential_provider_list[j].sendData( (Resources.RESOURCE_ACCESS_REQUEST + ":" + getCheckedResourceId()).getBytes() );
+				}
+				*/
 				
 			}
 		}

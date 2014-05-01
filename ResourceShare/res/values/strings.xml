@@ -16,6 +16,9 @@
     <string name="next">Next</string>
     
     <string name="flash">Flash</string>
+    <string name="flash_on">Switch on flash</string>
+    <string name="flash_off">Switch off flash</string>
+    
     <string name="camera">Camera</string>
     <string name="wifi">Wifi</string>
     <string name="gps">GPS</string>

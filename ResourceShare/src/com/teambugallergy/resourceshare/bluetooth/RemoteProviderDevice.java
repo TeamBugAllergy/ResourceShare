@@ -78,6 +78,11 @@ public class RemoteProviderDevice {
 					callerHandler.obtainMessage(RemoteProviderDevice.CONNECTION_STATUS, RemoteProviderDevice.CONNECTION_FAILURE).sendToTarget();
 					
 				}
+				//Unexpected messages
+				else
+				{
+					LogMsg("Unexpected message received in this Hnadler.");
+				}
 				
 			}
 						
@@ -168,7 +173,7 @@ public class RemoteProviderDevice {
 	}
 	
 
-	private void LogMsg(String msg) {
+	private static void LogMsg(String msg) {
 		Log.d("RemoteProviderDevice", msg);
 	}
 }

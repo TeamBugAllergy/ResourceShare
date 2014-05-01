@@ -6,11 +6,13 @@ import com.teambugallergy.resourceshare.bluetooth.RemoteSeekerDevice;
 import com.teambugallergy.resourceshare.bluetooth.ServerThread;
 import com.teambugallergy.resourceshare.constants.Resources;
 import com.teambugallergy.resourceshare.resources.Flash;
+import com.teambugallergy.resourceshare.resources.Resource;
 
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -87,11 +89,13 @@ public class ProviderActivity extends Activity implements OnClickListener {
 
 		public void handleMessage(Message msg) {
 
+			LogMsg("Message received");
+			
 			// if the message is from RemoteSeekerDevice
 			if (msg.what == RemoteSeekerDevice.CONNECTION_STATUS) {
 
 				// if the connection was successful
-				if (msg.obj.equals(RemoteSeekerDevice.CONNECTION_SUCCESS)) {
+				if (Integer.parseInt( msg.obj.toString() ) == RemoteSeekerDevice.CONNECTION_SUCCESS) {
 
 					// LogMsg("INSIDE:CONNECTION_SUCCESS");
 
@@ -107,17 +111,19 @@ public class ProviderActivity extends Activity implements OnClickListener {
 					// and getDevice, THEY WERE null :)
 					// So directly use the ServerThread's socket
 					// ******************************
-					seeker_device.socket = ServerThread.socket;
-					seeker_device.device = ServerThread.socket
-							.getRemoteDevice();
+					seeker_device.setSocket( ServerThread.socket );
+					seeker_device.setDevice( ServerThread.socket.getRemoteDevice() );
 
 					// Create a connected device using this connection.
 					connected_device = new ConnectedDevice(
 							seeker_device.getDevice(),
 							seeker_device.getSocket(), providerActivityHandler);
 
+					//set the device index to 0
+					connected_device.setDeviceIndex(0);
+					
 					// Display the device information to user
-					connected_device_info.setText("Device: "
+					connected_device_info.setText("Seeker Device: "
 							+ connected_device.getDevice().getName());
 
 					/*
@@ -220,7 +226,7 @@ public class ProviderActivity extends Activity implements OnClickListener {
 							// set message, title, and icon
 							.setTitle("Accept")
 							.setMessage(
-									"Are you willing to share the resource_name.")
+									"Are you willing to share the " + new Resource().getResourceName(resource_id) + "?")
 
 							.setPositiveButton("Yes",
 									new DialogInterface.OnClickListener() {
@@ -241,9 +247,19 @@ public class ProviderActivity extends Activity implements OnClickListener {
 													.sendData((Resources.REQUEST_STATUS
 															+ ":" + Resources.REQUEST_ACCEPTED)
 															.getBytes());
-
+																						
 											LogMsg("Sending message to Seeker:'Resource is available and accepted to share.'");
 											dialog.dismiss();
+											
+											// goto Resource Specific Activity
+											//and finish this activity
+											Intent intent = new Resource().getIntetToResourceActivity(resource_id, providerActivityContext, 1);
+											providerActivityContext.startActivity(intent);
+											
+											//TODO:finish this activity											
+											//LogMsg("going to resource specific activity and finishing this activity.");
+											//providerActivityContext.finish();
+											
 										}
 
 									})
@@ -321,8 +337,12 @@ public class ProviderActivity extends Activity implements OnClickListener {
 					
 					
 				}
-					
 				
+			}
+			//Unexpected messages
+			else
+			{
+				LogMsg("Unexpected message received in this Handler: msg.what=" + msg.what);
 			}
 
 		}
@@ -390,6 +410,15 @@ public class ProviderActivity extends Activity implements OnClickListener {
 
 	}
 
+	/**
+	 * Returns a reference to the object of connected Seeker device used by ProviderDevice Activity.
+	 * @return Reference to <i>connected_device</i>.
+	 */
+	public static ConnectedDevice getConnectedSeekerDevice()
+	{
+		return connected_device; 
+	}
+	
 	@Override
 	protected void onResume() {
 		super.onResume();
@@ -397,7 +426,6 @@ public class ProviderActivity extends Activity implements OnClickListener {
 		// LogMsg("INSIDE:onResume");
 
 		seeker_device = new RemoteSeekerDevice(providerActivityHandler);
-
 		startListening();
 	}
 
@@ -410,12 +438,13 @@ public class ProviderActivity extends Activity implements OnClickListener {
 
 		// LogMsg("INSIDE:onStop");
 
-		if (seeker_device != null) {
+	/*	if (seeker_device != null) {
 
 			// Don't why, but below statement should not be called here
 			// seeker_device.stopListeningToDevice();
 		}
-
+ 	*/
+		/* below statement is used in Next Resource Specific activity, So it is commented here.
 		// stop the reading thread
 		if (connected_device != null) {
 			// no need of this
@@ -425,11 +454,11 @@ public class ProviderActivity extends Activity implements OnClickListener {
 			// SHARING
 			// terminate the connection
 			 connected_device.disconnect();
-			// TODO: above statement must be called IN FUTURE
-		}
+			// above statement must be called IN FUTURE
+		} */
 
-		// finish();
-		// LogMsg("Finished");
+		finish();
+		LogMsg("Finished");
 	}
 
 	@Override

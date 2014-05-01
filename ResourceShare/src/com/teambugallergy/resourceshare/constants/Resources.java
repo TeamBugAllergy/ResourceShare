@@ -20,7 +20,7 @@ public interface Resources {
 	 */
 	public static final int RESOURCE_STATUS = 700;
 	
-	//---------------------------------RESOURCE AVAILABILITY CONSTANTS---------------------------------
+	//RESOURCE AVAILABILITY CONSTANTS
 	/**
 	 *  Resource is present in the device and free.
 	 */
@@ -42,6 +42,7 @@ public interface Resources {
 	 */
 	public static final int REQUEST_STATUS = 704;
 	
+	//Possible statuses 
 	/**
 	 * User at Provider end has ACCEPTED to share the resource.
 	 */
@@ -52,24 +53,56 @@ public interface Resources {
 	 */
 	public static final int REQUEST_REJECTED = 706;
 	
-	//----------------------------------RESOURCE CONSTANTS--------------------------------
+	//------------------------------------------------------------------------------------------------
 	/**
 	 * 'what' of a message read from a seeker device containing a Resource Id
 	 * that has been requested by the seeker.
 	 */
 	public static final int REQUESTING_RESOURCE_ID = 707;
 	
-	//----------------------------------STARTS WITH 710--------------------------------------------------
+	//RESOURCE CONSTANTS
+	//------------------------------------------------------------------------------------------------
+	
+	//FLASH: STARTS WITH 710
 	public static final int FLASH = 710;
+	public static final int FLASH_CONTROL = 711;
+	public static final int FLASH_SWITCH_ON = 712;
+	public static final int FLASH_SWITCH_OFF = 713;
+	//------------------------------------------------------------------------------------------------
 	
-	public static final int WIFI = 711;
+	//WIFI: STARTS WITH 720
+	public static final int WIFI = 720;
+	//------------------------------------------------------------------------------------------------
 	
-	public static final int GPS = 712;
+	//GPS: STARTS WITH 730
+	public static final int GPS = 730;
+	//------------------------------------------------------------------------------------------------
 	
-	public static final int CAMERA = 713;
+	//CAMERA: STARTS WITH 740
+	public static final int CAMERA = 740;
+	//------------------------------------------------------------------------------------------------
 	
-	public static final int SPEAKER = 714;
+	//SPEAKER: STARTS WITH 750
+	public static final int SPEAKER = 750;
+	//------------------------------------------------------------------------------------------------
 	
-
+	//ACCESSING RESOURCES
+	//STARTS WITH 800
+	
+	/**
+	 * 'what' of a message that tells that message is about 'Requesting Access to a Resource'. 
+	 */
+	public static final int RESOURCE_ACCESS_REQUEST = 800;
+	
+	/** 
+	 * The Potential provider has Accepted to access the resource.
+	 */
+	public static final int RESOURCE_ACCESS_GRANTED = 801;
+	
+	/**
+	 * The Potential provider has Denied to access the resource.
+	 */
+	public static final int RESOURCE_ACCESS_DENIED = 802;
+	
 	//------------------------------------------------------------------------------------------------
 }

@@ -38,13 +38,13 @@ public class RemoteSeekerDevice {
 	/**
 	 * Device to be connected to.
 	 */
-	public static BluetoothDevice device = null;
+	private static BluetoothDevice device = null;
 
 	/**
 	 * Socket used for connection and communication between local device and
 	 * Remote Device.
 	 */
-	public static BluetoothSocket socket = null;
+	private static BluetoothSocket socket = null;
 
 	/**
 	 * Object of ServerThread. It used for connecting and obtaining socket.
@@ -104,6 +104,11 @@ public class RemoteSeekerDevice {
 							RemoteSeekerDevice.CONNECTION_STATUS,
 							RemoteSeekerDevice.CONNECTION_FAILURE)
 							.sendToTarget();
+				}
+				//Unexpected messages
+				else
+				{
+					LogMsg("Unexpected message received in this Hnadler.");
 				}
 
 			}
@@ -213,6 +218,30 @@ public class RemoteSeekerDevice {
 		return socket;
 	}
 
+	/**
+	 * Sets the object of BluetoothDevice that is stored as <i>device</i>.
+	 * 
+	 * @param device BluetoothDevice object to be set.
+	 */
+	public void setDevice(BluetoothDevice device) {
+		
+		//LogMsg("INSIDE:setDevice");
+
+		this.device = device;
+	}
+
+	/**
+	 * Sets the object of BluetoothSocket that is stored as <i>socket</i>.
+	 * 
+	 * @param socket BluetoothSocket object to be set.
+	 */
+	public void setSocket(BluetoothSocket socket) {
+		
+		//LogMsg("INSIDE:setSocket");
+
+		this.socket = socket;
+	}
+	
 	/**
 	 * Closes the socket and stops the on going communication through that
 	 * socket.

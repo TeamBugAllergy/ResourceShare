@@ -99,21 +99,21 @@ public class ConnectedDevice {
 	}
 	
 	/**
-	 * Sets the device_index of this ConnectedDevice object to <i>index</i>.
-	 * @param index index of this object in connected_device_list[] array of ResourceListActivity.
-	 */
-	public void setDeviceIndex(int index)
-	{
-		device_index = index;
-	}
-	
-	/**
 	 * Sets the new <i>handler</i> as the <i>callerHandler</i> of this object. 
 	 * @param handler
 	 */
 	public void setCallerHandler(Handler handler)
 	{
 		callerHandler = handler;
+	}
+	
+	/**
+	 * Sets the device_index of this ConnectedDevice object to <i>index</i>.
+	 * @param index index of this object in connected_device_list[] array of ResourceListActivity.
+	 */
+	public void setDeviceIndex(int index)
+	{
+		device_index = index;
 	}
 	
 	/**
@@ -242,7 +242,7 @@ public class ConnectedDevice {
 				while (true) {
 				//while ( stop == false) {
 					
-					LogMsg("Waiting for data from " + device.getName());
+					//LogMsg("Waiting for data from " + device.getName());
 					
 					try {
 						// Reads from the InputStream
@@ -297,7 +297,9 @@ public class ConnectedDevice {
 	{
 		if(socket != null)
 			try {
+				LogMsg("***Closing the socket and disconnecting.");
 				socket.close();
+				
 			} catch (IOException e) {
 				LogMsg("Error in closing the socket- " + e);
 			}
