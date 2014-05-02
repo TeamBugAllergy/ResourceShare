@@ -5,12 +5,6 @@
     android:gravity="center"
     android:orientation="vertical" >
     
-    <TextView
-        android:id="@+id/sharing_status"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-    
     <ToggleButton 
         android:id="@+id/flash_switch"
         android:layout_width="wrap_content"
@@ -18,5 +12,20 @@
         android:visibility="gone"
         android:textOn="@string/flash_off"
         android:textOff="@string/flash_on" />
-
+    
+    <TextView
+        android:id="@+id/sharing_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dip"
+        android:visibility="gone" />
+    
+    <Button 
+        android:id="@+id/stop_sharing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stop_sharing"
+        android:layout_marginTop="30dip"
+        android:visibility="gone" />
+    
 </LinearLayout>

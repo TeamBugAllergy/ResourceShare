@@ -104,5 +104,35 @@ public interface Resources {
 	 */
 	public static final int RESOURCE_ACCESS_DENIED = 802;
 	
+	//-------------------
+	/**
+	 * The Control message to tell to switch on/off the flash.
+	 */
+	public static final int SHARING_CONTROL = 803;
+	
+	/**
+	 * Message to start sharing the resource.
+	 */
+	public static final int START_SHARING = 805;
+
+	/**
+	 * Message to stop sharing the resource.
+	 */
+	public static final int STOP_SHARING = 804;
+	//--------------------
+	/**
+	 * The State of the sharing process Stopped/Started. 
+	 */
+	public static final int SHARING_STATUS = 806;
+	
+	/**
+	 * Message to telling the Resource is NOT SHARED.
+	 */
+	public static final int SHARING_STOPPED = 807;
+	
+	/**
+	 * Message to telling the Resource is SHARED.
+	 */
+	public static final int SHARING_STARTED = 808;
 	//------------------------------------------------------------------------------------------------
 }

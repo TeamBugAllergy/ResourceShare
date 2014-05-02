@@ -15,6 +15,8 @@
     
     <string name="next">Next</string>
     
+    <string name="stop_sharing">Stop Sharing</string>
+    
     <string name="flash">Flash</string>
     <string name="flash_on">Switch on flash</string>
     <string name="flash_off">Switch off flash</string>
@@ -24,4 +26,5 @@
     <string name="gps">GPS</string>
     <string name="request_resource">Request</string>
     <string name="resource_list_access_resource">Access Resource</string>
+    
 </resources>

@@ -14,8 +14,11 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
 
@@ -50,6 +53,16 @@ public class SeekerFlashActivity extends Activity {
 	 */
 	private static ToggleButton flash_switch;
 	
+	/**
+	 * TextView to display the sharing status.
+	 */
+	private static TextView sharing_status;
+	
+	/**
+	 * Button to stop sharing .
+	 */
+	private static Button stop_sharing;
+	
 	// -----------------------------------------------------------------------------------
 	/**
 	 * Handler to receive messages.
@@ -62,8 +75,37 @@ public class SeekerFlashActivity extends Activity {
 
 			LogMsg("Message received");
 			
+			//message that informs the SHARING_STATUS of the flash
+			if(msg.what == Resources.SHARING_STATUS)
+			{
+				if( Integer.parseInt( msg.obj.toString() ) == Resources.SHARING_STARTED)
+				{
+					LogMsg(potential_provider_list[msg.arg2].getDevice()
+							.getName() + " has started sharing the flash");
+					
+					//display it in sharing_status
+					sharing_status.setText(potential_provider_list[msg.arg2].getDevice()
+							.getName() + " has started sharing the flash");
+				}
+				else// if( Integer.parseInt( msg.obj.toString() ) == Resources.SHARING_STOPPED)
+				{
+					//Disable the UI to allow the user to start using the flash :)
+					flash_switch.setEnabled(false);
+					
+					//display the button to stop sharing
+					stop_sharing.setEnabled(false);
+					
+					LogMsg(potential_provider_list[msg.arg2].getDevice()
+							.getName() + " has stopped sharing the flash");
+					
+					//display it in sharing_status
+					sharing_status.setText(potential_provider_list[msg.arg2].getDevice()
+							.getName() + " has stopped sharing the flash");
+				}
+				
+			}
 			// message is RESOURCE_ACCESS_REQUEST
-			if (msg.what == Resources.RESOURCE_ACCESS_REQUEST) {
+			else if (msg.what == Resources.RESOURCE_ACCESS_REQUEST) {
 				
 				// if provider has accepted the resource access
 				if (Integer.parseInt(msg.obj.toString()) == Resources.RESOURCE_ACCESS_GRANTED) {
@@ -83,6 +125,15 @@ public class SeekerFlashActivity extends Activity {
 					flash_switch.setVisibility(View.VISIBLE);
 					flash_switch.setChecked(false);
 					
+					//display the message
+					sharing_status.setText(potential_provider_list[msg.arg2].getDevice()
+							.getName() + "has started sharing Flash");
+					
+					//display the button to stop sharing
+					stop_sharing.setVisibility(View.VISIBLE);
+					
+					//Wait for SHARING_STATUS messages from provider devices
+					potential_provider_list[msg.arg2].receiveData();
 				}
 			
 				// if provider has denied the resource access
@@ -189,7 +240,9 @@ public class SeekerFlashActivity extends Activity {
 						// send the message to provider devices to swtich off the flash
 						potential_provider_list[i].sendData( (Resources.FLASH_CONTROL + ":" + Resources.FLASH_SWITCH_ON).getBytes() );
 						LogMsg("Sending FLASH_SWITCH_ON to potential provider devices");
-						Toast.makeText(seekerFlashActivityContext, "Switching on the flash", Toast.LENGTH_SHORT).show();
+						//Toast.makeText(seekerFlashActivityContext, "Switching on the flash", Toast.LENGTH_SHORT).show();
+						
+						sharing_status.setText("Flash is switched on");
 					}
 				}
 				else
@@ -200,11 +253,35 @@ public class SeekerFlashActivity extends Activity {
 						// send the message to provider devices to swtich off the flash
 						potential_provider_list[i].sendData( (Resources.FLASH_CONTROL + ":" + Resources.FLASH_SWITCH_OFF).getBytes() );
 						LogMsg("Sending FLASH_SWITCH_OFF to potential provider devices");
-						Toast.makeText(seekerFlashActivityContext, "Switching off the flash", Toast.LENGTH_SHORT).show();
+						//Toast.makeText(seekerFlashActivityContext, "Switching off the flash", Toast.LENGTH_SHORT).show();
+						
+						sharing_status.setText("Flash is switched off");
 					}
 				}
 				}
 				
+			}
+		});
+		
+		//TextView to disply the sharing status
+		sharing_status = (TextView)findViewById(R.id.sharing_status);
+		sharing_status.setVisibility(View.VISIBLE);
+		sharing_status.setText("Waiting for Access Permission from Provider devices.");
+		
+		//button to stop the sharing
+		stop_sharing = (Button)findViewById(R.id.stop_sharing);
+		stop_sharing.setOnClickListener(new OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				//send a message  STOP_SHARING to devices in potential_provider_list[]
+				for(int i=0; potential_provider_list[i] != null; i++)
+				{
+					//message will have 'SHARING_CONTROL:STOP_SHARING'.
+					potential_provider_list[i].sendData( (Resources.SHARING_CONTROL + ":" + Resources.STOP_SHARING).getBytes() );
+					
+					//TODO: if you are expecting any other messages from Potential Provider Devices, potential_providr_device[i].receiveData();
+				}
 			}
 		});
 		

@@ -467,7 +467,12 @@ public class SeekerActivity extends Activity implements OnClickListener,
 				// INTENTS
 				// So connected_device_list[] has been made public and static
 				startActivity(i);
-				// finish()
+				
+				//finish this activity
+				finish();
+				LogMsg("Finishing Seeker Activity");
+				
+				
 			} else {
 				Toast.makeText(this, "No device is connected.",
 						Toast.LENGTH_LONG).show();

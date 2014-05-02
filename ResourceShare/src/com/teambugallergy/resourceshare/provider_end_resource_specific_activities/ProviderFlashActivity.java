@@ -16,6 +16,8 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -49,6 +51,11 @@ public class ProviderFlashActivity extends Activity {
 	 */
 	private static TextView sharing_status;
 	
+	/**
+	 * Button to stop sharing .
+	 */
+	private static Button stop_sharing;
+	
 	// -----------------------------------------------------------------------------------
 	/**
 	 * Handler to receive messages.
@@ -57,7 +64,8 @@ public class ProviderFlashActivity extends Activity {
 
 		public void handleMessage(Message msg) {
 
-		// message is FLASH_CONTROL
+		//***This if()else should be in the beginning :) 	
+		// message is FLASH_CONTROL 
 		if(msg.what == Resources.FLASH_CONTROL)
 		{
 			//If it is telling to switch on
@@ -66,7 +74,7 @@ public class ProviderFlashActivity extends Activity {
 				//switch on the flash
 				flash.switchOnFlash();
 				LogMsg("Switching on the flash.");
-				Toast.makeText(providerFlashActivityContext, "Switching on the flash", Toast.LENGTH_SHORT).show();
+				//Toast.makeText(providerFlashActivityContext, "Switching on the flash", Toast.LENGTH_SHORT).show();
 			}
 			
 			else //No need if( msg.obj.equals(Resources.FLASH_SWITCH_OFF) )
@@ -74,11 +82,34 @@ public class ProviderFlashActivity extends Activity {
 				//switch off the flash
 				flash.switchOffFlash();
 				LogMsg("Switching off the flash.");
-				Toast.makeText(providerFlashActivityContext, "Switching off the flash", Toast.LENGTH_SHORT).show();
+				//Toast.makeText(providerFlashActivityContext, "Switching off the flash", Toast.LENGTH_SHORT).show();
 			}
 			
 			//again wait for messages from seker device
 			connected_seeker_device.receiveData();
+		}
+		//if the message is SHARING_CONTROL
+		else if(msg.what == Resources.SHARING_CONTROL)
+		{
+			//if it is STOP_SHARING
+			if( Integer.parseInt( msg.obj.toString() ) == Resources.STOP_SHARING )
+			{
+			
+			//stop sharing flash	
+			stopSharingFlash();	
+			
+			LogMsg("Flash has been released");
+			sharing_status.setText(connected_seeker_device.getDevice().getName() + " has stopped using the flash. Flash has been released.");
+			
+			//TODO: if you are expecting any other messages from Seeker Device, connected_seeker_device.receiveData();
+			}
+			//if it is START_SHARING
+			else //if( Integer.parseInt( msg.obj.toString() ) == Resources.START_SHARING ) 
+			{
+				//TODO: Ask user's permission and start sharing the flash
+				LogMsg("TODO: code to start sharing the flash");
+			}
+			
 		}
 		
 			// message is RESOURCE_ACCESS_REQUEST
@@ -134,6 +165,10 @@ public class ProviderFlashActivity extends Activity {
 											
 											//display the status to user
 											sharing_status.setText("Flash is being used by " + connected_seeker_device.getDevice().getName());
+											
+											//display the button to stop sharing
+											stop_sharing.setVisibility(View.VISIBLE);
+											
 										}
 										else
 										{
@@ -217,13 +252,48 @@ public class ProviderFlashActivity extends Activity {
 			sharing_status = (TextView)findViewById(R.id.sharing_status);
 			//show the TextView
 			sharing_status.setVisibility(View.VISIBLE);
+			//display the status to user
+			sharing_status.setText("Waiting for Access Request from " + connected_seeker_device.getDevice().getName());
+			
+			//button to stop the sharing
+			stop_sharing = (Button)findViewById(R.id.stop_sharing);
+			stop_sharing.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+
+					//stop sharing
+					stopSharingFlash();
+					
+					//TODO: if you are expecting any other messages from Potential Provider Devices, potential_providr_device[i].receiveData();
+					}
+				}
+			);
 						
 		} else {
 			LogMsg("There is no Connected Seeker Device.");
 		}
 
 	}
-
+	/**
+	 * Swtiches off the flash and releases it.
+	 * Also sends the message to Seeker device stating that Resource is not Shared.
+	 */
+	private static void stopSharingFlash()
+	{
+		//switch off the flash
+		flash.switchOffFlash();
+		//release the flash
+		flash.releaseFlash();
+		
+		//send a message to seeker device telling that resource is no more shared.
+		//message "SHARING_STATUS:SHARING_STOPPED"
+		connected_seeker_device.sendData( (Resources.SHARING_STATUS + ":" + Resources.SHARING_STOPPED).getBytes() );
+		
+		//display the message
+		sharing_status.setText("Sharing the flash has been stopped.");
+	}
+	
 	@Override
 	protected void onDestroy() {
 		super.onDestroy();
