@@ -242,7 +242,7 @@ public class ConnectedDevice {
 				while (true) {
 				//while ( stop == false) {
 					
-					//LogMsg("Waiting for data from " + device.getName());
+					LogMsg("Waiting for data from " + device.getName());
 					
 					try {
 						// Reads from the InputStream
@@ -263,7 +263,7 @@ public class ConnectedDevice {
 
 					} catch (IOException e) {
 						LogMsg("Data received completely from "
-								+ device.getName() + ".");
+								+ device.getName() + ":" + data);
 						// go out of the while loop and terminate the Thread.
 						break;
 					}
@@ -297,7 +297,7 @@ public class ConnectedDevice {
 	{
 		if(socket != null)
 			try {
-				LogMsg("***Closing the socket and disconnecting.");
+				LogMsg("***Closing the socket and disconnecting.***");
 				socket.close();
 				
 			} catch (IOException e) {

@@ -140,10 +140,6 @@ public class ProviderActivity extends Activity implements OnClickListener {
 					dialog.changeDialog("Please wait till a resource is requested.");
 
 					// read the Resource Id from connected_device
-
-					// read the data
-					// data read will be sent through messages
-					// call stopReceivingData() when expected dta has been read
 					connected_device.receiveData();
 
 					LogMsg("Detected device: "
@@ -256,9 +252,10 @@ public class ProviderActivity extends Activity implements OnClickListener {
 											Intent intent = new Resource().getIntetToResourceActivity(resource_id, providerActivityContext, 1);
 											providerActivityContext.startActivity(intent);
 											
-											//TODO:finish this activity											
-											//LogMsg("going to resource specific activity and finishing this activity.");
-											//providerActivityContext.finish();
+											//Test
+											//finish this activity											
+											LogMsg("going to resource specific activity and finishing this activity.");
+											((Activity) providerActivityContext).finish();
 											
 										}
 
@@ -457,8 +454,9 @@ public class ProviderActivity extends Activity implements OnClickListener {
 			// above statement must be called IN FUTURE
 		} */
 
-		finish();
-		LogMsg("Finished");
+		//This activity will be finished only when user ACCEPTS TO SHare the resource in AlertDialog.
+		//finish();
+		//LogMsg("Finished");
 	}
 
 	@Override

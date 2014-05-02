@@ -109,7 +109,7 @@ public class Flash{
 			
 			//get the initial parameters
 			parameter_flash_mode = camera.getParameters();
-		
+			
 		}
 		else
 		{
@@ -138,7 +138,7 @@ public class Flash{
 				//Optional camera.lock();
 				camera.startPreview();
 				LogMsg("Started camera preview, i.e flash is switched on");
-				
+				 
 			} catch (Exception e) {
 				LogMsg("Error: In starting camera preview- " + e);
 			}
@@ -157,7 +157,7 @@ public class Flash{
 				//set the mode to off
 				parameter_flash_mode.setFlashMode(Parameters.FLASH_MODE_OFF);
 				camera.setParameters(parameter_flash_mode);
-				
+								
 				//Optional camera.unlock();
 				camera.stopPreview();
 				LogMsg("Stoped the camera preivew, i.e flash is switched off");

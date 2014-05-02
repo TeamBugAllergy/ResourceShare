@@ -107,6 +107,9 @@ public class ProviderFlashActivity extends Activity {
 									public void onClick(DialogInterface dialog,
 											int whichButton) {
 
+										//close the alertDialog
+										dialog.dismiss();
+										
 										// try to acquire and lock the
 										// resource.
 										flash = new Flash(providerFlashActivityContext);
@@ -144,8 +147,7 @@ public class ProviderFlashActivity extends Activity {
 											//TODO: send an ERROR message to Seeker device about this issue
 											
 										}
-										//close the alertDialog
-										dialog.dismiss();
+										
 									}
 
 								})
@@ -223,8 +225,8 @@ public class ProviderFlashActivity extends Activity {
 	}
 
 	@Override
-	protected void onStop() {
-		super.onStop();
+	protected void onDestroy() {
+		super.onDestroy();
 
 		// stop the reading thread
 		if (connected_seeker_device != null) {
