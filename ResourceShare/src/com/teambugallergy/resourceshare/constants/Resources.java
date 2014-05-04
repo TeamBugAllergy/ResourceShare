@@ -111,9 +111,9 @@ public interface Resources {
 	public static final int SHARING_CONTROL = 803;
 	
 	/**
-	 * Message to start sharing the resource.
+	 * Message to start sharing the resource. No use of this, because we are not restarting the sharing process.
 	 */
-	public static final int START_SHARING = 805;
+	//public static final int START_SHARING = 805;
 
 	/**
 	 * Message to stop sharing the resource.
@@ -134,5 +134,13 @@ public interface Resources {
 	 * Message to telling the Resource is SHARED.
 	 */
 	public static final int SHARING_STARTED = 808;
+	//------------------------------------------------------------------------------------------------
+	
+	/**
+	 * Message to notify the receiver device DISCONNECT the connection. This way is used make sure that the
+	 * Receiver will not send any data after disconnection.  
+	 * Usually Only Provider Device will disconnectes itself from seeker device.
+	 */
+	public static final int DISCONNECT = 809;
 	//------------------------------------------------------------------------------------------------
 }

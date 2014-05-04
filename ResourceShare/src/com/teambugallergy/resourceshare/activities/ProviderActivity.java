@@ -12,6 +12,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -219,10 +220,6 @@ public class ProviderActivity extends Activity {
 				// Resource is Available
 				if (resource_availability == Resources.RESOURCE_AVAILABLE) {
 
-					// if it is available,
-					// Stop or close the waiting dialog
-					dialog.closeDialog();
-
 					// and display a confirm message
 					AlertDialog confirmResourceId = new AlertDialog.Builder(
 							providerActivityContext)
@@ -240,6 +237,11 @@ public class ProviderActivity extends Activity {
 										public void onClick(
 												DialogInterface dialog,
 												int whichButton) {
+											
+											// if it is available,
+											// Stop or close the waiting dialog
+											 ProviderActivity.dialog.closeDialog();
+											
 											// Send a message to
 											// SeekerDevice
 											// telling that resource_id is
@@ -288,6 +290,7 @@ public class ProviderActivity extends Activity {
 										public void onClick(
 												DialogInterface dialog,
 												int which) {
+											
 											// Send a message to
 											// SeekerDevice
 											// telling that Provider is NOT
@@ -311,7 +314,7 @@ public class ProviderActivity extends Activity {
 
 										}
 									}).create();
-
+					
 					// display the dialog on the screen
 					confirmResourceId.show();
 

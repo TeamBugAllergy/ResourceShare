@@ -1,6 +1,7 @@
 package com.teambugallergy.resourceshare.seeker_end_resource_specific_activities;
 
 import com.teambugallergy.resourceshare.R;
+import com.teambugallergy.resourceshare.activities.MainActivity;
 import com.teambugallergy.resourceshare.activities.ResourceListActivity;
 import com.teambugallergy.resourceshare.bluetooth.ConnectedDevice;
 import com.teambugallergy.resourceshare.constants.Resources;
@@ -9,6 +10,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -80,27 +82,35 @@ public class SeekerFlashActivity extends Activity {
 			{
 				if( Integer.parseInt( msg.obj.toString() ) == Resources.SHARING_STARTED)
 				{
-					LogMsg(potential_provider_list[msg.arg2].getDevice()
+					LogMsg(potential_provider_list[sender_index].getDevice()
 							.getName() + " has started sharing the flash");
 					
 					//display it in sharing_status
-					sharing_status.setText(potential_provider_list[msg.arg2].getDevice()
+					sharing_status.setText(potential_provider_list[sender_index].getDevice()
 							.getName() + " has started sharing the flash");
 				}
 				else// if( Integer.parseInt( msg.obj.toString() ) == Resources.SHARING_STOPPED)
 				{
-					//Disable the UI to allow the user to start using the flash :)
+	/*				//Disable the UI to allow the user to start using the flash :)
 					flash_switch.setEnabled(false);
 					
 					//display the button to stop sharing
 					stop_sharing.setEnabled(false);
 					
-					LogMsg(potential_provider_list[msg.arg2].getDevice()
+	*/
+					LogMsg(potential_provider_list[sender_index].getDevice()
 							.getName() + " has stopped sharing the flash");
 					
 					//display it in sharing_status
-					sharing_status.setText(potential_provider_list[msg.arg2].getDevice()
+					sharing_status.setText(potential_provider_list[sender_index].getDevice()
 							.getName() + " has stopped sharing the flash");
+					
+					//****IMP*****
+					// Note down this potential_provider_device
+					// because ONLY this provider should not be sent messages to switch on/off the flash
+					
+					//remove this provider and shift remaining devices in the array to left
+					removeProviderDeviceFromList(sender_index);
 				}
 				
 			}
@@ -190,12 +200,16 @@ public class SeekerFlashActivity extends Activity {
 												DialogInterface dialog,
 												int which) {
 											
-											//****IMP*****
-											//TODO: TODO: note down this potential_provider_device
-											//TODO: because this provider should be sent messages to switch on/off the flash
-											
 											LogMsg("Didn't send the RESOURCE_ACCESS_REQUEST message again to " + potential_provider_list[sender_index].getDevice()
 													.getName());
+											
+											//****IMP*****
+											//Note down this potential_provider_device
+											// because ONLY this provider should not be sent messages to switch on/off the flash
+											
+											//remove this provider and shift remaining devices in the array to left
+											removeProviderDeviceFromList(sender_index);
+											
 											dialog.dismiss();
 
 										}
@@ -315,7 +329,55 @@ public class SeekerFlashActivity extends Activity {
 
 	};
 	
-	//TODO: A STOP SHARING button to stop sharing and release the resource.
+	/**
+	 * Makes the ConnectedDevice object in <i>potential_provider_list[]</i> null. So that it will not be used in future.
+	 * So makes that object null and shift the devices ahead of it in the array one position left.
+	 * @param position index of ConnectedDevice object in the potential_provider_list[] array which has to be removed from list. 
+	 */
+	private static void removeProviderDeviceFromList(int position)
+	{
+		
+		Toast.makeText(seekerFlashActivityContext, potential_provider_list[position].getDevice().getName() + " has been disconnected.", Toast.LENGTH_LONG).show();
+		
+		//message to tell the provider to disconect itself.
+		potential_provider_list[position].sendData( (Resources.DISCONNECT + ":" + 0).getBytes() );
+		
+		//make the 'position'th object null
+		potential_provider_list[position] = null;
+
+		//from 'i = position+1'
+		int i;
+		for(i = position + 1; potential_provider_list[i] != null; i++)
+		{
+			//shift one position left,
+			potential_provider_list[i-1] = potential_provider_list[i];
+			
+			//also change the device_index in ConnectedDvice object
+			potential_provider_list[i-1].setDeviceIndex( (i-1) );
+			
+		}
+		//remove the repeated object at the end of array
+		potential_provider_list[i-1] = null;
+		
+		LogMsg("One provider device has been removed.");
+		
+		LogMsg("potential_provider_list[] has:");
+		for(i = 0; potential_provider_list[i] != null; i++)
+			LogMsg(potential_provider_list[i].getDevice().getName() + "");
+		
+		//TODO: if there are no objects in the array,
+		//i.e If there are no Potential provider devices, goto MainActivity and finish this activity.
+		if(potential_provider_list[0] == null)
+		{
+			//start the MainActivity
+			//Intent intent = new Intent(seekerFlashActivityContext, MainActivity.class);
+			//seekerFlashActivityContext.startActivity(intent);
+			
+			//finish() this activity
+			((Activity) seekerFlashActivityContext).finish();
+		}
+		
+	}
 	
 	private static void LogMsg(String msg) {
 		Log.d("SeekerFlashActivity", msg);

@@ -1,6 +1,7 @@
 package com.teambugallergy.resourceshare.provider_end_resource_specific_activities;
 
 import com.teambugallergy.resourceshare.R;
+import com.teambugallergy.resourceshare.activities.MainActivity;
 import com.teambugallergy.resourceshare.activities.ProviderActivity;
 import com.teambugallergy.resourceshare.bluetooth.ConnectedDevice;
 import com.teambugallergy.resourceshare.constants.Resources;
@@ -11,6 +12,7 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -99,16 +101,34 @@ public class ProviderFlashActivity extends Activity {
 			stopSharingFlash();	
 			
 			LogMsg("Flash has been released");
-			sharing_status.setText(connected_seeker_device.getDevice().getName() + " has stopped using the flash. Flash has been released.");
+			//NN:sharing_status.setText(connected_seeker_device.getDevice().getName() + " has stopped using the flash. Flash has been released.");
 			
 			//TODO: if you are expecting any other messages from Seeker Device, connected_seeker_device.receiveData();
 			}
-			//if it is START_SHARING
-			else //if( Integer.parseInt( msg.obj.toString() ) == Resources.START_SHARING ) 
-			{
-				//TODO: Ask user's permission and start sharing the flash
-				LogMsg("TODO: code to start sharing the flash");
-			}
+			
+			
+		}
+		
+		//if the message is Disconnect message,
+		else if(msg.what == Resources.DISCONNECT)
+		{
+			//***IMP***
+			//This is the FUTURE where disconnecte() should be called.
+			
+			//just terminate the connection.
+			connected_seeker_device.disconnect();
+			
+			LogMsg(connected_seeker_device.getDevice().getName() + " has been disconnected.");
+			
+			//display the message
+			Toast.makeText(providerFlashActivityContext, connected_seeker_device.getDevice().getName() + " has been disconnected.", Toast.LENGTH_SHORT).show();
+
+			//goback to MainActivity and finish() this activity
+			//Intent intent = new Intent(providerFlashActivityContext, MainActivity.class);
+			//providerFlashActivityContext.startActivity(intent);
+			
+			//finish this activity
+			((Activity) providerFlashActivityContext).finish();
 			
 		}
 		
@@ -179,8 +199,7 @@ public class ProviderFlashActivity extends Activity {
 											//display the status to user
 											sharing_status.setText("Flash couldn't be acquired. Check any other process is using it.");
 											
-											//TODO: send an ERROR message to Seeker device about this issue
-											
+											//TODO: finish this and goback to MainActivity.
 										}
 										
 									}
@@ -265,7 +284,7 @@ public class ProviderFlashActivity extends Activity {
 					//stop sharing
 					stopSharingFlash();
 					
-					//TODO: if you are expecting any other messages from Potential Provider Devices, potential_providr_device[i].receiveData();
+					//TODO: if you are expecting any other messages from seeker device, connected_seeker_device.receiveData();
 					}
 				}
 			);

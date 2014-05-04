@@ -184,8 +184,8 @@ public class MainActivity extends Activity implements OnClickListener {
 			Intent i = new Intent(this, ProviderActivity.class);
 			startActivity(i);
 
-			// finish this Activity
-			// finish();
+			//finish this Activity
+			//finish();
 
 		}
 
@@ -194,8 +194,8 @@ public class MainActivity extends Activity implements OnClickListener {
 			Intent i = new Intent(this, SeekerActivity.class);
 			startActivity(i);
 
-			// finish this Activity
-			// finish();
+			//finish this Activity
+			//finish();
 		}
 	}
 
