@@ -22,6 +22,8 @@
     <string name="flash_off">Switch off flash</string>
     
     <string name="camera">Camera</string>
+    <string name="take_picture">Take Picture</string>
+    
     <string name="wifi">Wifi</string>
     <string name="gps">GPS</string>
     <string name="request_resource">Request</string>

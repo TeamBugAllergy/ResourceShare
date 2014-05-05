@@ -4,5 +4,33 @@
     android:layout_height="match_parent"
     android:orientation="vertical" >
     
-
+	<Button 
+        android:id="@+id/take_picture"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="@string/take_picture" />
+    
+    <TextView
+        android:id="@+id/sharing_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dip"
+        android:visibility="gone" />
+    
+    <Button 
+        android:id="@+id/stop_sharing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stop_sharing"
+        android:layout_marginTop="30dip"
+        android:visibility="gone" />
+    
+    <ImageView 
+	    android:id="@+id/clicked_image"
+	    android:layout_width="100dip"
+	    android:layout_height="100dip"
+	    android:contentDescription="@string/app_name"
+	    android:visibility="gone" />
+    
 </LinearLayout>

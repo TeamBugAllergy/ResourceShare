@@ -20,7 +20,7 @@ import android.util.Log;
  * </i>
  * 
  * 02-04-2014
- * @author Adiga
+ * @author Adiga@TeamBugAllergy
  */
 public class ConnectedDevice {
 

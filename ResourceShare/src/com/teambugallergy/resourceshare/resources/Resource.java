@@ -5,14 +5,17 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.teambugallergy.resourceshare.constants.Resources;
+import com.teambugallergy.resourceshare.provider_end_resource_specific_activities.ProviderCameraActivity;
 import com.teambugallergy.resourceshare.provider_end_resource_specific_activities.ProviderFlashActivity;
+import com.teambugallergy.resourceshare.seeker_end_resource_specific_activities.SeekerCameraActivity;
 import com.teambugallergy.resourceshare.seeker_end_resource_specific_activities.SeekerFlashActivity;
 
 /**
  * This class has methods general to all the flashes. General functionalities
  * that you wish to perform on all OR specific resource are defined here.
  * 
- * @author Adiga 27-04-2014
+ * @author Adiga@TeamBugAllergy
+ *  27-04-2014
  */
 public class Resource {
 
@@ -106,12 +109,10 @@ public class Resource {
 			
 		case Resources.CAMERA:
 
-			// TODO: 
-			/*
 			if (device_end == 0)
 				return new Intent(context, SeekerCameraActivity.class);
 			else if (device_end == 1)
-				return new Intent(context, ProviderCameraActivity.class); */
+				return new Intent(context, ProviderCameraActivity.class); 
 			
 			// TODO: other resources
 		default:
@@ -119,8 +120,6 @@ public class Resource {
 			return null;
 		}
 	}
-	// TODO: a method that takes the resource_id and starts the respective
-	// Activity for that resource.
 
 	private static void LogMsg(String msg) {
 		Log.d("Resource", msg);

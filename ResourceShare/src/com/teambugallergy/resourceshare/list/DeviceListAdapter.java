@@ -19,7 +19,7 @@ import android.widget.TextView;
  * 
  * <b>Separate ListAdpter should be defined for different types of rows in the list.</b>
  * @since 06-04-2014
- * @author Adiga
+ * @author Adiga@TeamBugAllergy
  * 
  */
 

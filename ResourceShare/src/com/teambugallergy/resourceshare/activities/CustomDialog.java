@@ -18,7 +18,7 @@ import android.widget.TextView;
  * There is a message displayed and a OK button.
  * 
  * 05-04-2014
- * @author Adiga
+ * @author Adiga@TeamBugAllergy
  *
  */
 public class CustomDialog extends Dialog implements OnClickListener{

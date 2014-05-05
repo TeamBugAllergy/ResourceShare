@@ -16,7 +16,7 @@ import android.widget.ListView;
  * the object of this class should provide it's own OnItemClickListener<i>
  * 
  * @since 04-04-2014
- * @author Adiga
+ * @author Adiga@TeamBugAllergy
  * 
  */
 public class Lists {

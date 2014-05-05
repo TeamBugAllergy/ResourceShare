@@ -1,7 +1,6 @@
 package com.teambugallergy.resourceshare.provider_end_resource_specific_activities;
 
 import com.teambugallergy.resourceshare.R;
-import com.teambugallergy.resourceshare.activities.MainActivity;
 import com.teambugallergy.resourceshare.activities.ProviderActivity;
 import com.teambugallergy.resourceshare.bluetooth.ConnectedDevice;
 import com.teambugallergy.resourceshare.constants.Resources;
@@ -12,7 +11,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -29,7 +27,8 @@ import android.widget.Toast;
  * Resource. Send the result of this process to Seeker Device. This activity
  * will have buttons to control the sharing the Flash.
  * 
- * @author Team BugAllergy 30-04-2014
+ * @author Adiga@TeamBugAllergy
+ *  30-04-2014
  */
 public class ProviderFlashActivity extends Activity {
 
@@ -122,8 +121,6 @@ public class ProviderFlashActivity extends Activity {
 			Toast.makeText(providerFlashActivityContext, connected_seeker_device.getDevice().getName() + " has been disconnected.", Toast.LENGTH_SHORT).show();
 
 			//goback to MainActivity and finish() this activity
-			//Intent intent = new Intent(providerFlashActivityContext, MainActivity.class);
-			//providerFlashActivityContext.startActivity(intent);
 			
 			//finish this activity
 			((Activity) providerFlashActivityContext).finish();
@@ -314,10 +311,9 @@ public class ProviderFlashActivity extends Activity {
 	 */
 	@Override
 	public void onBackPressed() {
-		//super.onBackPressed();
+		super.onBackPressed();
 		
 		//notify the seeker about this
-		//stopSharingFlash();
 		AlertDialog confirmOnBack = new AlertDialog.Builder(
 				providerFlashActivityContext)
 				// set message, title, and icon

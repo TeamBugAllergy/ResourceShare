@@ -25,7 +25,7 @@ import android.content.Intent;
  * 
  * 04-04-2014
  * 
- * @author Adiga
+ * @author Adiga@TeamBugAllergy
  * 
  */
 public class MainActivity extends Activity implements OnClickListener {

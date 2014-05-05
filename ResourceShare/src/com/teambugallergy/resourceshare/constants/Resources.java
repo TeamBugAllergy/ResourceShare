@@ -10,7 +10,8 @@ package com.teambugallergy.resourceshare.constants;
  * -------------------------------------- <br/>
  * </i>
  * 
- * @author Adiga 22-04-2014
+ * @author Adiga@TeamBugAllergy
+ *  22-04-2014
  */
 public interface Resources {
 
@@ -80,6 +81,9 @@ public interface Resources {
 	
 	//CAMERA: STARTS WITH 740
 	public static final int CAMERA = 740;
+	public static final int CAMERA_CONTROL = 741;
+	public static final int TAKE_PICTURE = 742;
+	public static final int IMAGE_SAVED = 743;
 	//------------------------------------------------------------------------------------------------
 	
 	//SPEAKER: STARTS WITH 750

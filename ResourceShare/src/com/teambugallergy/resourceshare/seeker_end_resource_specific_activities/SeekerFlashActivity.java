@@ -33,7 +33,8 @@ import android.widget.ToggleButton;
  * seekerFlashActivityHandler.*** Display appropriate messages to user based on
  * the messages received from potential_provider_list.
  * 
- * @author Team BugAllergy 30-04-2014
+ * @author Adiga@TeamBugAllergy
+ *  30-04-2014
  */
 public class SeekerFlashActivity extends Activity {
 
@@ -294,7 +295,6 @@ public class SeekerFlashActivity extends Activity {
 					//message will have 'SHARING_CONTROL:STOP_SHARING'.
 					potential_provider_list[i].sendData( (Resources.SHARING_CONTROL + ":" + Resources.STOP_SHARING).getBytes() );
 					
-					//TODO: if you are expecting any other messages from Potential Provider Devices, potential_providr_device[i].receiveData();
 				}
 			}
 		});

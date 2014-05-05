@@ -9,11 +9,11 @@ import android.hardware.Camera.Parameters;
 import android.util.Log;
 
 /**
- * This class has methods that help to use the Flash Resource in the device.
+ * This class has methods that allows to use the Flash Resource in the device.
  * The methodologies provide querring for availability (available, unavailable and busy) of the resource,
  * accessing the resource (switching on/off, giving data to OR taking the data from the resource) and other Resource Specific 
  * functionalities, if any.
- * @author Adiga
+ * @author Adiga@TeamBugAllergy
  * 27-04-2014
  */
 public class MyFlash{
@@ -45,6 +45,10 @@ public class MyFlash{
 	 */
 	private Parameters parameter_flash_mode;
 
+	/**
+	 * Checks the availabilty of the flash and stores the result in 'availability'.
+	 * @param context Context of the caller Activity.
+	 */
 	public MyFlash(Context context)
 	{
 		//save the context.
@@ -79,7 +83,7 @@ public class MyFlash{
 	}
 	
 	/**
-	 * Check the availability of the Flash and return the result.
+	 * Return the availability of the Flash.
 	 * @return
 	 */
 	public int availability()

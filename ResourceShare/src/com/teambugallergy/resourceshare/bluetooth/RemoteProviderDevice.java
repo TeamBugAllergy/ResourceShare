@@ -18,7 +18,7 @@ import android.util.Log;
  * <br/>
  * </i>
  * :02-04-2014
- * @author Adiga
+ * @author Adiga@TeamBugAllergy
  */
 public class RemoteProviderDevice {
 

@@ -5,6 +5,7 @@ import com.teambugallergy.resourceshare.bluetooth.ConnectedDevice;
 import com.teambugallergy.resourceshare.bluetooth.RemoteSeekerDevice;
 import com.teambugallergy.resourceshare.bluetooth.ServerThread;
 import com.teambugallergy.resourceshare.constants.Resources;
+import com.teambugallergy.resourceshare.resources.MyCamera;
 import com.teambugallergy.resourceshare.resources.MyFlash;
 import com.teambugallergy.resourceshare.resources.Resource;
 
@@ -12,7 +13,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -36,7 +36,7 @@ import android.widget.Toast;
  * 
  * 06-04-2014
  * 
- * @author Adiga
+ * @author Adiga@TeamBugAllergy
  * 
  */
 public class ProviderActivity extends Activity {
@@ -202,10 +202,17 @@ public class ProviderActivity extends Activity {
 				// and
 				switch (resource_id) {
 				case Resources.FLASH:
+					//just to check for availability
 					resource_availability = new MyFlash(providerActivityContext)
 							.availability();
 					break;
-
+					
+				case Resources.CAMERA:
+					//just to check for availability
+					resource_availability = new MyCamera(providerActivityContext, null)
+							.availability();
+					break;
+					
 				// TODO: for other the resources
 
 				default:
