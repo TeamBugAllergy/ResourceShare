@@ -5,7 +5,7 @@ import com.teambugallergy.resourceshare.activities.MainActivity;
 import com.teambugallergy.resourceshare.activities.ProviderActivity;
 import com.teambugallergy.resourceshare.bluetooth.ConnectedDevice;
 import com.teambugallergy.resourceshare.constants.Resources;
-import com.teambugallergy.resourceshare.resources.Flash;
+import com.teambugallergy.resourceshare.resources.MyFlash;
 import com.teambugallergy.resourceshare.resources.Resource;
 
 import android.app.Activity;
@@ -46,7 +46,7 @@ public class ProviderFlashActivity extends Activity {
 	/**
 	 * Object of Flash class, to control the flash resource.
 	 */
-	private static Flash flash;
+	private static MyFlash flash;
 	
 	/**
 	 * TextView to display the sharing status.
@@ -101,9 +101,7 @@ public class ProviderFlashActivity extends Activity {
 			stopSharingFlash();	
 			
 			LogMsg("Flash has been released");
-			//NN:sharing_status.setText(connected_seeker_device.getDevice().getName() + " has stopped using the flash. Flash has been released.");
 			
-			//TODO: if you are expecting any other messages from Seeker Device, connected_seeker_device.receiveData();
 			}
 			
 			
@@ -163,7 +161,7 @@ public class ProviderFlashActivity extends Activity {
 										
 										// try to acquire and lock the
 										// resource.
-										flash = new Flash(providerFlashActivityContext);
+										flash = new MyFlash(providerFlashActivityContext);
 										
 										LogMsg("Trying to acquire the Flash.");
 										if(flash.acquireFlash() == true)
@@ -283,8 +281,6 @@ public class ProviderFlashActivity extends Activity {
 
 					//stop sharing
 					stopSharingFlash();
-					
-					//TODO: if you are expecting any other messages from seeker device, connected_seeker_device.receiveData();
 					}
 				}
 			);
@@ -310,7 +306,57 @@ public class ProviderFlashActivity extends Activity {
 		connected_seeker_device.sendData( (Resources.SHARING_STATUS + ":" + Resources.SHARING_STOPPED).getBytes() );
 		
 		//display the message
-		sharing_status.setText("Sharing the flash has been stopped.");
+		//sharing_status.setText("Sharing the flash has been stopped.");
+	}
+	
+	/**
+	 * To disconnect from seeker device and release the Flash.
+	 */
+	@Override
+	public void onBackPressed() {
+		//super.onBackPressed();
+		
+		//notify the seeker about this
+		//stopSharingFlash();
+		AlertDialog confirmOnBack = new AlertDialog.Builder(
+				providerFlashActivityContext)
+				// set message, title, and icon
+				.setTitle("Going back.")
+				.setMessage( "Sharing has been completed." )
+
+				.setPositiveButton("Ok",
+						new DialogInterface.OnClickListener() {
+
+							public void onClick(DialogInterface dialog,
+									int whichButton) {
+								
+								stopSharingFlash();
+								// stop the reading thread
+								if (connected_seeker_device != null) {
+									
+									// terminate the connection
+									connected_seeker_device.disconnect();
+									LogMsg("Disconnected from the " + connected_seeker_device.getDevice().getName());
+									
+								}
+								
+								//release the flash
+								if(flash != null)
+								{
+									//release the Flash and camera
+									flash.releaseFlash();
+								}
+								
+								LogMsg("User has confirmed.");
+								dialog.dismiss();
+								
+								((Activity) providerFlashActivityContext).finish();
+								
+						}}).create();
+
+						// display the dialog on the screen
+		confirmOnBack.show();
+		
 	}
 	
 	@Override
@@ -326,7 +372,7 @@ public class ProviderFlashActivity extends Activity {
 			// SHARING
 			// terminate the connection
 			connected_seeker_device.disconnect();
-			// TODO: above statement must be called IN FUTURE
+			// above statement must be called IN FUTURE
 		}
 		
 		//release the flash

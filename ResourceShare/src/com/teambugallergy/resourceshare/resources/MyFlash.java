@@ -16,7 +16,7 @@ import android.util.Log;
  * @author Adiga
  * 27-04-2014
  */
-public class Flash{
+public class MyFlash{
 	
 	/**
 	 * Availability status returned by availability() method.
@@ -45,7 +45,7 @@ public class Flash{
 	 */
 	private Parameters parameter_flash_mode;
 
-	public Flash(Context context)
+	public MyFlash(Context context)
 	{
 		//save the context.
 		this.callerContext = context;

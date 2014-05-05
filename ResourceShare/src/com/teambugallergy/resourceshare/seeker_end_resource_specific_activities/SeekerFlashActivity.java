@@ -361,11 +361,11 @@ public class SeekerFlashActivity extends Activity {
 		
 		LogMsg("One provider device has been removed.");
 		
-		LogMsg("potential_provider_list[] has:");
-		for(i = 0; potential_provider_list[i] != null; i++)
-			LogMsg(potential_provider_list[i].getDevice().getName() + "");
+	//	LogMsg("potential_provider_list[] has:");
+	//	for(i = 0; potential_provider_list[i] != null; i++)
+	//		LogMsg(potential_provider_list[i].getDevice().getName() + "");
 		
-		//TODO: if there are no objects in the array,
+		//if there are no objects in the array,
 		//i.e If there are no Potential provider devices, goto MainActivity and finish this activity.
 		if(potential_provider_list[0] == null)
 		{
@@ -376,6 +376,23 @@ public class SeekerFlashActivity extends Activity {
 			//finish() this activity
 			((Activity) seekerFlashActivityContext).finish();
 		}
+		
+	}
+	
+	/**
+	 * To disconnect from all the potential provider devices by sending them 'DISCONNECT'.
+	 */
+	@Override
+	public void onBackPressed() {
+		super.onBackPressed();
+		
+		//remove all the devices from the potential_provider_list[]
+		for(int i=0; potential_provider_list[i] != null; i++)
+		{
+			//removes each of the provider device and sends them 'DISCONNECT' message.
+			removeProviderDeviceFromList(i);	
+		}
+		LogMsg("All the providers have been removed and disconnected.");
 		
 	}
 	

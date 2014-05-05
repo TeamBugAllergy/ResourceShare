@@ -269,6 +269,7 @@ public class MainActivity extends Activity implements OnClickListener {
 			Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
 	}
 
+	
 	private void LogMsg(String msg) {
 		Log.d("MainActivity", msg);
 	}

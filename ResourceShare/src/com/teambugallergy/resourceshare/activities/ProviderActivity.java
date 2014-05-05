@@ -5,7 +5,7 @@ import com.teambugallergy.resourceshare.bluetooth.ConnectedDevice;
 import com.teambugallergy.resourceshare.bluetooth.RemoteSeekerDevice;
 import com.teambugallergy.resourceshare.bluetooth.ServerThread;
 import com.teambugallergy.resourceshare.constants.Resources;
-import com.teambugallergy.resourceshare.resources.Flash;
+import com.teambugallergy.resourceshare.resources.MyFlash;
 import com.teambugallergy.resourceshare.resources.Resource;
 
 import android.app.Activity;
@@ -202,7 +202,7 @@ public class ProviderActivity extends Activity {
 				// and
 				switch (resource_id) {
 				case Resources.FLASH:
-					resource_availability = new Flash(providerActivityContext)
+					resource_availability = new MyFlash(providerActivityContext)
 							.availability();
 					break;
 
