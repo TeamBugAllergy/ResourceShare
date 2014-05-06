@@ -3,7 +3,6 @@ package com.teambugallergy.resourceshare.resources;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.List;
 
 import com.teambugallergy.resourceshare.constants.Resources;
@@ -99,6 +98,7 @@ public class MyCamera {
 	    	}
 			//release the camera
 	    	camera.release();
+	    	camera = null;
 	    	
          	//Device has Flash and it is free now (AVAILABLE).
 	    	availability = Resources.RESOURCE_AVAILABLE;
@@ -179,9 +179,6 @@ public class MyCamera {
 		//create a surface view object
 		SurfaceView view = new SurfaceView(callerContext);
 		
-		//set the camera parameters
-		setCameraDefaults();
-		
 		try {
 			//obtain a camera object 
     		camera = Camera.open();
@@ -193,7 +190,7 @@ public class MyCamera {
 			camera.startPreview();
 			
 		} 
-		catch (IOException e)
+		catch (Exception e)
 		{ 
 			LogMsg("ERROR: In acquiring the camera- " + e);
 			
@@ -201,6 +198,9 @@ public class MyCamera {
 			return false;
 		}
 		
+		//set the camera parameters
+		setCameraDefaults();
+				
 		//return the success result
 		return true;
 	}
@@ -238,7 +238,8 @@ public class MyCamera {
 					LogMsg("Saved the image");
 					
 					//notify tha UI thread that image has been saved and is ready to be displayed
-					callerHandler.obtainMessage(Resources.IMAGE_SAVED).sendToTarget();
+					//data sent 'IMAGE_SAVED:image_name'
+					callerHandler.obtainMessage(Resources.IMAGE_SAVED, "Teambugallergy"+ (num -1) +".jpg").sendToTarget();
 					
 					LogMsg("notifying the UIThread by sending IMAGE_SAVED message.");
 					
