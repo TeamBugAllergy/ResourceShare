@@ -2,15 +2,16 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
+   	android:gravity="center"
     android:orientation="vertical" >
     
-	<Button 
-        android:id="@+id/take_picture"
+    <ToggleButton 
+        android:id="@+id/wifi_switch"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:text="@string/take_picture" />
+        android:textOn="@string/wifi_off"
+        android:textOff="@string/wifi_on" />
     
     <TextView
         android:id="@+id/sharing_status"
@@ -26,20 +27,5 @@
         android:text="@string/stop_sharing"
         android:layout_marginTop="30dip"
         android:visibility="gone" />
-    
-    <ImageView 
-	    android:id="@+id/clicked_image"
-	    android:layout_width="100dip"
-	    android:layout_height="100dip"
-	    android:contentDescription="@string/app_name"
-	    android:visibility="gone" />
-    
-    <Button 
-        android:id="@+id/display_clicked_image"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/display_clicked_image"
-        android:layout_marginTop="30dip"
-        android:visibility="gone" />
-    
+
 </LinearLayout>

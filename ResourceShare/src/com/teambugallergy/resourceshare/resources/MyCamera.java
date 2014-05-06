@@ -162,8 +162,13 @@ public class MyCamera {
 	    // Lastly set the focus to auto.
 	    params.setFocusMode(Camera.Parameters.FOCUS_MODE_AUTO);
 
-	    //set the updated parameters to the camera
-	    camera.setParameters(params);
+	    try {
+			//set the updated parameters to the camera
+			camera.setParameters(params);
+		} catch (Exception e) {
+
+			LogMsg("ERROR: In setting the parameters- " + e);
+		}
 	    
 	    //TODO:Check:- Flash enabled only for first click
 	    //TODO:Check:- Rotated image is displayed. 
@@ -288,6 +293,6 @@ public class MyCamera {
 	}
 	
 	private static void LogMsg(String msg) {
-		Log.d("Flash", msg);
+		Log.d("Camera", msg);
 	}
 }

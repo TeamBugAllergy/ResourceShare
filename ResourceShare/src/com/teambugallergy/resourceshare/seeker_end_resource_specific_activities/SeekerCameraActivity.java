@@ -125,6 +125,8 @@ public class SeekerCameraActivity extends Activity {
 			{
 				//close the custom dialog
 				dialog.closeDialog();
+				LogMsg("Closing the dialog IMAGE_SAVED");
+				
 				//TODO:ERROR:- Only after all the potential provider devices send this message then close the dialog
 			}
 			
@@ -293,13 +295,14 @@ public class SeekerCameraActivity extends Activity {
 						
 						sharing_status.setText("Picture has been taken");
 						
-						//display a CustomDialog with ProgressBar
-						dialog = new CustomDialog(seekerCameraActivityContext, "Taking picture...",
-								"Image is being taken.Please wait...");
-						// display the dialog
-						dialog.show();
-						//This dialog will be closed once this activity receives IMAGE_SAVED message from all of the potential providers
 					}
+					
+					//display a CustomDialog with ProgressBar
+					dialog = new CustomDialog(seekerCameraActivityContext, "Taking picture...",
+							"Image is being taken.Please wait...");
+					// display the dialog
+					dialog.show();
+					//This dialog will be closed once this activity receives IMAGE_SAVED message from all of the potential providers
 
 				}
 			}

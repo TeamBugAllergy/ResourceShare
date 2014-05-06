@@ -1,10 +1,5 @@
 package com.teambugallergy.resourceshare.seeker_end_resource_specific_activities;
 
-import com.teambugallergy.resourceshare.R;
-import com.teambugallergy.resourceshare.activities.ResourceListActivity;
-import com.teambugallergy.resourceshare.bluetooth.ConnectedDevice;
-import com.teambugallergy.resourceshare.constants.Resources;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
@@ -17,24 +12,17 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.CompoundButton;
-import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import android.widget.CompoundButton.OnCheckedChangeListener;
 
-/**
- * This Activity is invoked by ResoueceListActivity <i>AFTER BELOW
- * PROCESSES</i>. onClick of 'Access Resource' button, will send a 'Resource
- * Access Request' message to Provider devices and start the
- * SeekerFlashActivity. ***Set the callerHandler for objects in
- * potential_provider_list as Handler of this class, i.e
- * seekerFlashActivityHandler.*** Display appropriate messages to user based on
- * the messages received from potential_provider_list.
- * 
- * @author Adiga@TeamBugAllergy
- *  30-04-2014
- */
-public class SeekerFlashActivity extends Activity {
+import com.teambugallergy.resourceshare.R;
+import com.teambugallergy.resourceshare.activities.ResourceListActivity;
+import com.teambugallergy.resourceshare.bluetooth.ConnectedDevice;
+import com.teambugallergy.resourceshare.constants.Resources;
+
+public class SeekerWifiActivity extends Activity {
 
 	/**
 	 * An array of ConnectedDevice objects that are there in
@@ -47,12 +35,12 @@ public class SeekerFlashActivity extends Activity {
 	/**
 	 * Context of this activity.
 	 */
-	private static Context seekerFlashActivityContext;
+	private static Context seekerWifiActivityContext;
 
 	/**
-	 * To switch on/off the flash.
+	 * To switch on/off the wifi.
 	 */
-	private static ToggleButton flash_switch;
+	private static ToggleButton wifi_switch;
 	
 	/**
 	 * TextView to display the sharing status.
@@ -68,7 +56,7 @@ public class SeekerFlashActivity extends Activity {
 	/**
 	 * Handler to receive messages.
 	 */
-	private static Handler seekerFlashActivityHandler = new Handler() {
+	private static Handler seekerWifiActivityHandler = new Handler() {
 
 		public void handleMessage(Message msg) {
 
@@ -76,37 +64,37 @@ public class SeekerFlashActivity extends Activity {
 
 			LogMsg("Message received");
 			
-			//message that informs the SHARING_STATUS of the flash
+			//message that informs the SHARING_STATUS of the wifi
 			if(msg.what == Resources.SHARING_STATUS)
 			{
 				if( Integer.parseInt( msg.obj.toString() ) == Resources.SHARING_STARTED)
 				{
 					LogMsg(potential_provider_list[sender_index].getDevice()
-							.getName() + " has started sharing the flash");
+							.getName() + " has started sharing the wifi");
 					
 					//display it in sharing_status
 					sharing_status.setText(potential_provider_list[sender_index].getDevice()
-							.getName() + " has started sharing the flash");
+							.getName() + " has started sharing the wifi");
 				}
 				else// if( Integer.parseInt( msg.obj.toString() ) == Resources.SHARING_STOPPED)
 				{
-	/*				//Disable the UI to allow the user to start using the flash :)
-					flash_switch.setEnabled(false);
+	/*				//Disable the UI to allow the user to start using the wifi :)
+					wifi_switch.setEnabled(false);
 					
 					//display the button to stop sharing
 					stop_sharing.setEnabled(false);
 					
 	*/
 					LogMsg(potential_provider_list[sender_index].getDevice()
-							.getName() + " has stopped sharing the flash");
+							.getName() + " has stopped sharing the wifi");
 					
 					//display it in sharing_status
 					sharing_status.setText(potential_provider_list[sender_index].getDevice()
-							.getName() + " has stopped sharing the flash");
+							.getName() + " has stopped sharing the wifi");
 					
 					//****IMP*****
 					// Note down this potential_provider_device
-					// because ONLY this provider should not be sent messages to switch on/off the flash
+					// because ONLY this provider should not be sent messages to switch on/off the wifi
 					
 					//remove this provider and shift remaining devices in the array to left
 					removeProviderDeviceFromList(sender_index);
@@ -121,22 +109,22 @@ public class SeekerFlashActivity extends Activity {
 					
 					// display a message
 					Toast.makeText(
-							seekerFlashActivityContext,
+							seekerWifiActivityContext,
 							potential_provider_list[msg.arg2].getDevice()
 									.getName()
-									+ "has accepted the access to Flash",
+									+ "has accepted the access to Wifi",
 							Toast.LENGTH_LONG).show();
 
 					LogMsg(potential_provider_list[msg.arg2].getDevice()
-							.getName() + "has accepted the access to Flash");
+							.getName() + "has accepted the access to Wifi");
 
-					//Enable the UI to allow the user to start using the flash :)
-					flash_switch.setVisibility(View.VISIBLE);
-					flash_switch.setChecked(false);
+					//Enable the UI to allow the user to start using the wifi :)
+					wifi_switch.setVisibility(View.VISIBLE);
+					wifi_switch.setChecked(false);
 					
 					//display the message
 					sharing_status.setText(potential_provider_list[msg.arg2].getDevice()
-							.getName() + "has started sharing Flash");
+							.getName() + "has started sharing wifi");
 					
 					//display the button to stop sharing
 					stop_sharing.setVisibility(View.VISIBLE);
@@ -149,25 +137,25 @@ public class SeekerFlashActivity extends Activity {
 				else if (Integer.parseInt(msg.obj.toString()) == Resources.RESOURCE_ACCESS_DENIED) {
 					// display a message
 					Toast.makeText(
-							seekerFlashActivityContext,
+							seekerWifiActivityContext,
 							potential_provider_list[msg.arg2].getDevice()
 									.getName()
-									+ "has denied the access to Flash",
+									+ "has denied the access to Wifi",
 							Toast.LENGTH_LONG).show();
 
 					LogMsg(potential_provider_list[msg.arg2].getDevice()
-							.getName() + "has denied the access to Flash");
+							.getName() + "has denied the access to Wifi");
 
 					//Ask the user if he/she wants to resend the
 					// RESOURCE_ACCESS_REQUEST message and wait for the reply
 					// ONLY to this particular Potential Provider.
 					AlertDialog confirmResourceId = new AlertDialog.Builder(
-							seekerFlashActivityContext)
+							seekerWifiActivityContext)
 							// set message, title, and icon
 							.setTitle("Retry access.")
 							.setMessage(potential_provider_list[msg.arg2].getDevice()
 									.getName() +
-									" has denied to share the Flash. Would you like to try again?")
+									" has denied to share the Wifi. Would you like to try again?")
 
 							.setPositiveButton("Yes",
 									new DialogInterface.OnClickListener() {
@@ -181,7 +169,7 @@ public class SeekerFlashActivity extends Activity {
 											// ONLY to this particular Potential Provider.
 											LogMsg("Resending the message RESOURCE_ACCESS_REQUEST to " + potential_provider_list[sender_index].getDevice().getName());
 											//data in the form 'what:data' i.e 'RESOURCE_ACCESS_REQUEST:resource_id'
-											potential_provider_list[sender_index].sendData( (Resources.RESOURCE_ACCESS_REQUEST + ":" + Resources.FLASH).getBytes() );
+											potential_provider_list[sender_index].sendData( (Resources.RESOURCE_ACCESS_REQUEST + ":" + Resources.WIFI).getBytes() );
 
 											// start waiting for reply messages from potential_provider_list[].
 											potential_provider_list[sender_index].receiveData();
@@ -204,7 +192,7 @@ public class SeekerFlashActivity extends Activity {
 											
 											//****IMP*****
 											//Note down this potential_provider_device
-											// because ONLY this provider should not be sent messages to switch on/off the flash
+											// because ONLY this provider should not be sent messages to switch on/off the wifi
 											
 											//remove this provider and shift remaining devices in the array to left
 											removeProviderDeviceFromList(sender_index);
@@ -222,7 +210,7 @@ public class SeekerFlashActivity extends Activity {
 			}
 			// Unexpected messages
 			else {
-				LogMsg("Unexpected message received in this Hnadler.");
+				LogMsg("Unexpected message received in this Handler.");
 			}
 		}
 	};
@@ -233,42 +221,42 @@ public class SeekerFlashActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
-		// same layout is also used by ProviderFlashActivity
-		setContentView(R.layout.activity_flash);
+		// same layout is also used by ProviderWifiActivity
+		setContentView(R.layout.activity_wifi);
 
 		//This toggle button is made visible only after getting a RESOURCE_ACCESS_GRANT message
-		flash_switch = (ToggleButton)findViewById(R.id.flash_switch);
-		flash_switch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
+		wifi_switch = (ToggleButton)findViewById(R.id.wifi_switch);
+		wifi_switch.setOnCheckedChangeListener(new OnCheckedChangeListener() {
 			
 			@Override
 			public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 			
-				if(buttonView.getId() == flash_switch.getId())
+				if(buttonView.getId() == wifi_switch.getId())
 				{
 				if(isChecked == true)
 				{
-					// switch on the flash
+					// switch on the wifi
 					for (int i = 0; potential_provider_list[i] != null ;i ++)
 					{
-						// send the message to provider devices to swtich off the flash
-						potential_provider_list[i].sendData( (Resources.FLASH_CONTROL + ":" + Resources.FLASH_SWITCH_ON).getBytes() );
-						LogMsg("Sending FLASH_SWITCH_ON to potential provider devices");
-						//Toast.makeText(seekerFlashActivityContext, "Switching on the flash", Toast.LENGTH_SHORT).show();
+						// send the message to provider devices to swtich off the wifi
+						potential_provider_list[i].sendData( (Resources.WIFI_CONTROL + ":" + Resources.WIFI_SWITCH_ON).getBytes() );
+						LogMsg("Sending WIFI_SWITCH_ON to potential provider devices");
+						//Toast.makeText(seekerWifiActivityContext, "Switching on the wifi", Toast.LENGTH_SHORT).show();
 						
-						sharing_status.setText("Flash is switched on");
+						sharing_status.setText("Wifi is switched on");
 					}
 				}
 				else
 				{
-					// switch off the flash
+					// switch off the wifi
 					for (int i = 0; potential_provider_list[i] != null ;i ++)
 					{
-						// send the message to provider devices to swtich off the flash
-						potential_provider_list[i].sendData( (Resources.FLASH_CONTROL + ":" + Resources.FLASH_SWITCH_OFF).getBytes() );
-						LogMsg("Sending FLASH_SWITCH_OFF to potential provider devices");
-						//Toast.makeText(seekerFlashActivityContext, "Switching off the flash", Toast.LENGTH_SHORT).show();
+						// send the message to provider devices to swtich off the wifi
+						potential_provider_list[i].sendData( (Resources.WIFI_CONTROL + ":" + Resources.WIFI_SWITCH_OFF).getBytes() );
+						LogMsg("Sending WIFI_SWITCH_OFF to potential provider devices");
+						//Toast.makeText(seekerFlashActivityContext, "Switching off the wifi", Toast.LENGTH_SHORT).show();
 						
-						sharing_status.setText("Flash is switched off");
+						sharing_status.setText("Wifi is switched off");
 					}
 				}
 				}
@@ -298,7 +286,7 @@ public class SeekerFlashActivity extends Activity {
 		});
 		
 		// save the context statically
-		seekerFlashActivityContext = this;
+		seekerWifiActivityContext = this;
 
 		// get the potential_provider_list[] array from ResourceListActivity
 		potential_provider_list = ResourceListActivity.getPotentialDeviceList();
@@ -310,13 +298,13 @@ public class SeekerFlashActivity extends Activity {
 			potential_provider_list[i].setDeviceIndex(i);
 
 			// set the callerHandler of objects in potential_provider_list[] to
-			// seekerFlashActivityHandler
+			// seekerWifiActivityHandler
 			potential_provider_list[i]
-					.setCallerHandler(seekerFlashActivityHandler);
+					.setCallerHandler(seekerWifiActivityHandler);
 						
 			LogMsg("sending the message RESOURCE_ACCESS_REQUEST");
 			//data in the form 'what:data' i.e 'RESOURCE_ACCESS_REQUEST:resource_id'
-			potential_provider_list[i].sendData( (Resources.RESOURCE_ACCESS_REQUEST + ":" + Resources.FLASH).getBytes() );
+			potential_provider_list[i].sendData( (Resources.RESOURCE_ACCESS_REQUEST + ":" + Resources.WIFI).getBytes() );
 			
 			// start waiting for reply messages from potential_provider_list[].
 			potential_provider_list[i].receiveData();
@@ -335,7 +323,7 @@ public class SeekerFlashActivity extends Activity {
 	private static void removeProviderDeviceFromList(int position)
 	{
 		
-		Toast.makeText(seekerFlashActivityContext, potential_provider_list[position].getDevice().getName() + " has been disconnected.", Toast.LENGTH_LONG).show();
+		Toast.makeText(seekerWifiActivityContext, potential_provider_list[position].getDevice().getName() + " has been disconnected.", Toast.LENGTH_LONG).show();
 		
 		//message to tell the provider to disconect itself.
 		potential_provider_list[position].sendData( (Resources.DISCONNECT + ":" + 0).getBytes() );
@@ -368,11 +356,11 @@ public class SeekerFlashActivity extends Activity {
 		if(potential_provider_list[0] == null)
 		{
 			//start the MainActivity
-			//Intent intent = new Intent(seekerFlashActivityContext, MainActivity.class);
-			//seekerFlashActivityContext.startActivity(intent);
+			//Intent intent = new Intent(seekerWifiActivityContext, MainActivity.class);
+			//seekerWifiActivityContext.startActivity(intent);
 			
 			//finish() this activity
-			((Activity) seekerFlashActivityContext).finish();
+			((Activity) seekerWifiActivityContext).finish();
 		}
 		
 	}
@@ -395,6 +383,7 @@ public class SeekerFlashActivity extends Activity {
 	}
 	
 	private static void LogMsg(String msg) {
-		Log.d("SeekerFlashActivity", msg);
+		Log.d("SeekerWifiActivity", msg);
 	}
+
 }

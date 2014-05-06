@@ -73,6 +73,9 @@ public interface Resources {
 	
 	//WIFI: STARTS WITH 720
 	public static final int WIFI = 720;
+	public static final int WIFI_CONTROL = 721;
+	public static final int WIFI_SWITCH_ON = 722;
+	public static final int WIFI_SWITCH_OFF = 723;
 	//------------------------------------------------------------------------------------------------
 	
 	//GPS: STARTS WITH 730

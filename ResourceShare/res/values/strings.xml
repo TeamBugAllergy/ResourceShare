@@ -23,8 +23,12 @@
     
     <string name="camera">Camera</string>
     <string name="take_picture">Take Picture</string>
+    <string name="display_clicked_image">Display Image</string>
     
     <string name="wifi">Wifi</string>
+    <string name="wifi_on">Switch on Wifi</string>
+    <string name="wifi_off">Switch off Wifi</string>
+    
     <string name="gps">GPS</string>
     <string name="request_resource">Request</string>
     <string name="resource_list_access_resource">Access Resource</string>

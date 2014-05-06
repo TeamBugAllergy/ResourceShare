@@ -7,8 +7,10 @@ import android.util.Log;
 import com.teambugallergy.resourceshare.constants.Resources;
 import com.teambugallergy.resourceshare.provider_end_resource_specific_activities.ProviderCameraActivity;
 import com.teambugallergy.resourceshare.provider_end_resource_specific_activities.ProviderFlashActivity;
+import com.teambugallergy.resourceshare.provider_end_resource_specific_activities.ProviderWifiActivity;
 import com.teambugallergy.resourceshare.seeker_end_resource_specific_activities.SeekerCameraActivity;
 import com.teambugallergy.resourceshare.seeker_end_resource_specific_activities.SeekerFlashActivity;
+import com.teambugallergy.resourceshare.seeker_end_resource_specific_activities.SeekerWifiActivity;
 
 /**
  * This class has methods general to all the flashes. General functionalities
@@ -91,13 +93,11 @@ public class Resource {
 
 		case Resources.WIFI:
 			
-			// TODO: 
-			/*
 			if (device_end == 0)
 				return new Intent(context, SeekerWifiActivity.class);
 			else if (device_end == 1)
-				return new Intent(context, ProviderWifiActivity.class); */
-			
+				return new Intent(context, ProviderWifiActivity.class); 
+
 		case Resources.SPEAKER:
 
 			// TODO: 

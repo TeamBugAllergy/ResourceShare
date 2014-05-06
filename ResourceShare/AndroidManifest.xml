@@ -7,14 +7,19 @@
     <uses-sdk
         android:minSdkVersion="8"
         android:targetSdkVersion="19" />
-
+    
+	<!-- Permission for Bluetooth-->
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     
-    <!-- Permission for Flash-->
+    <!-- Permission for Flash and Camera-->
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-feature android:name="android.hardware.camera" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    
+    <!-- Permission for Wifi-->
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
     
     <application
         android:allowBackup="true"
@@ -50,7 +55,6 @@
             android:name=".seeker_end_resource_specific_activities.SeekerFlashActivity"
             android:label="@string/app_name">
         </activity>
-        
         <activity 
             android:name=".provider_end_resource_specific_activities.ProviderFlashActivity"
             android:label="@string/app_name">
@@ -60,9 +64,17 @@
             android:name=".seeker_end_resource_specific_activities.SeekerCameraActivity"
             android:label="@string/app_name">
         </activity>
-        
         <activity 
             android:name=".provider_end_resource_specific_activities.ProviderCameraActivity"
+            android:label="@string/app_name">
+        </activity>
+        
+        <activity 
+            android:name=".provider_end_resource_specific_activities.ProviderWifiActivity"
+            android:label="@string/app_name">
+        </activity>
+        <activity 
+            android:name=".seeker_end_resource_specific_activities.SeekerWifiActivity"
             android:label="@string/app_name">
         </activity>
         

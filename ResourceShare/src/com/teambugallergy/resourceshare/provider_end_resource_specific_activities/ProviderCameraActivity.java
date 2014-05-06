@@ -11,13 +11,17 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -56,6 +60,22 @@ public class ProviderCameraActivity extends Activity{
 	 * Button to stop sharing .
 	 */
 	private static Button stop_sharing;
+	
+	/**
+	 * Button to display the last clicked image.
+	 */
+	private static Button display_clicked_image;
+	
+	/**
+	 * Name of the previously saved image
+	 */
+	private static String clicked_image_name = null;
+	
+	/**
+	 * ImageView to display last clicked image
+	 */
+	private static ImageView clicked_image;
+	
 	// -----------------------------------------------------------------------------------
 		/**
 		 * Handler to receive messages.
@@ -83,15 +103,23 @@ public class ProviderCameraActivity extends Activity{
 			//if the message is IMAGE_SAVED
 			else if(msg.what == Resources.IMAGE_SAVED)
 			{
-				LogMsg("IMAGE_SAVED");
 				
-				//TODO:Note:- msg.obj contains the name of the image that has been saved.
-				//TODO: resize the saved image and display the image in the ImageView.
-				//close the custom dialog
+				//msg.obj contains the name of the image that has been saved.
 				
 				//FORWARD the same message to connected seeker device. 
+				//data sent 'IMAGE_SAVED:image_name'
 				connected_seeker_device.sendData( (Resources.IMAGE_SAVED + ":" + msg.obj.toString() ).getBytes() );
 				LogMsg("Forwarding the IMAGE_SAVED message");
+				
+				//save the name of the image , It is used to display the image later
+				clicked_image_name = msg.obj.toString();
+				
+				//display the button to display the image
+				display_clicked_image.setVisibility(View.VISIBLE);
+				//display the image
+				clicked_image.setVisibility(View.VISIBLE);
+				
+				LogMsg("IMAGE_SAVED: "+clicked_image_name);
 			}
 			
 			//if the message is SHARING_CONTROL
@@ -289,6 +317,47 @@ public class ProviderCameraActivity extends Activity{
 					}
 				}
 			);
+			
+			//image view to display the clicked image
+			clicked_image = (ImageView)findViewById(R.id.clicked_image);
+			
+			//button to display the clicked image
+			display_clicked_image = (Button)findViewById(R.id.display_clicked_image);
+			display_clicked_image.setOnClickListener(new OnClickListener() {
+				
+				@Override
+				public void onClick(View v) {
+
+					if(v.getId() == display_clicked_image.getId())
+					{
+						if(clicked_image_name != null)
+						{
+							//resize the saved image and display the image 'clicked_image_name' in the ImageView.
+							Bitmap	bmp = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/" + clicked_image_name);
+			              if(bmp != null)
+			              {
+							int nh = (int) ( bmp.getHeight() * (512.0 / bmp.getWidth()) );
+			            	Bitmap scaled = Bitmap.createScaledBitmap(bmp, 512, nh, true);
+			            	clicked_image.setImageBitmap(scaled);
+			            
+			            	LogMsg("Displayed the image " + clicked_image_name);
+			            	
+			            	//recycle the bmp
+			            	if(bmp != null)
+			            	{
+			            		bmp.recycle();
+			            		bmp = null;
+			            	}
+			            	
+							//hide the button
+							display_clicked_image.setVisibility(View.GONE);
+							//this will be made visible after getting another image from IMAGE_SAVED
+			              }
+						}
+					
+					}
+				}	
+			});
 						
 		} else {
 			LogMsg("There is no Connected Seeker Device.");

@@ -7,6 +7,7 @@ import com.teambugallergy.resourceshare.bluetooth.ServerThread;
 import com.teambugallergy.resourceshare.constants.Resources;
 import com.teambugallergy.resourceshare.resources.MyCamera;
 import com.teambugallergy.resourceshare.resources.MyFlash;
+import com.teambugallergy.resourceshare.resources.MyWifi;
 import com.teambugallergy.resourceshare.resources.Resource;
 
 import android.app.Activity;
@@ -210,6 +211,12 @@ public class ProviderActivity extends Activity {
 				case Resources.CAMERA:
 					//just to check for availability
 					resource_availability = new MyCamera(providerActivityContext, null)
+							.availability();
+					break;
+				
+				case Resources.WIFI:
+					//just to check for availability
+					resource_availability = new MyWifi(providerActivityContext)
 							.availability();
 					break;
 					
