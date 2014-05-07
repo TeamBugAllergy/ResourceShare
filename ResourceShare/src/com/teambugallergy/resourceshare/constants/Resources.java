@@ -93,11 +93,11 @@ public interface Resources {
 	public static final int ACCELEROMETER = 750;
 	public static final int ACCELEROMETER_CONTROL = 751;
 	public static final int ACCELEROMETER_GET_XYZ = 752;
-	public static final int ACCELEROMETER_XYZ_VALUES = 752; //obj will contain "X:Y:Z"
+	public static final int ACCELEROMETER_XYZ_VALUES = 752; //obj will contain x,y and z values as 'x|y|z'
 	// ------------------------------------------------------------------------------------------------
 	
 	//SPEAKER: STARTS WITH 750
-	public static final int SPEAKER = 750;
+	public static final int SPEAKER = 760;
 	//------------------------------------------------------------------------------------------------
 	
 	//ACCESSING RESOURCES

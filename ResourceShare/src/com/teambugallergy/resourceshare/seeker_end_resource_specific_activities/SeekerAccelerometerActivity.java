@@ -86,7 +86,8 @@ public class SeekerAccelerometerActivity extends Activity {
 				xyz_values.append(potential_provider_list[sender_index].getDevice().getName() + ":\n");
 				
 				//get the x, y and z values from the message
-				String[] xyz = ( msg.obj.toString() ).split(":");
+				//obj contains 'x|y|z' values 
+				String[] xyz = ( msg.obj.toString() ).split("[|]");
 				
 				//X value
 				xyz_values.append( "X:" + xyz[0] + "\n");
@@ -97,6 +98,7 @@ public class SeekerAccelerometerActivity extends Activity {
 				//Z value
 				xyz_values.append( "Z:" + xyz[2] + "\n");
 				
+				LogMsg("xyz_values: x:" + xyz[0] +",y:" + xyz[1] +",z:" + xyz[2]);
 			} 
 			
 			// message that informs the SHARING_STATUS of the accelerometer

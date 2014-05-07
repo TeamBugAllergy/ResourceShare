@@ -44,10 +44,10 @@ public final class R {
         public static final int progress_bar=0x7f080019;
         public static final int provide_resource=0x7f080009;
         public static final int refresh=0x7f080014;
+        public static final int resource_list_accelerometer=0x7f080010;
         public static final int resource_list_access_resource=0x7f080013;
-        public static final int resource_list_camera=0x7f080010;
+        public static final int resource_list_camera=0x7f08000f;
         public static final int resource_list_flash=0x7f08000d;
-        public static final int resource_list_gps=0x7f08000f;
         public static final int resource_list_radio_group=0x7f08000c;
         public static final int resource_list_request_button=0x7f080011;
         public static final int resource_list_requested_resource_status=0x7f080012;
