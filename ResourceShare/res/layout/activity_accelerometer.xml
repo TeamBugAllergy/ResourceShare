@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical" >
+    
+    <Button 
+        android:id="@+id/get_xyz"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        android:text="@string/get_xyz" />
+    
+    <TextView
+        android:id="@+id/xyz_values"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dip"
+        android:visibility="gone" />
+    
+    <TextView
+        android:id="@+id/sharing_status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dip"
+        android:visibility="gone" />
+    
+    <Button 
+        android:id="@+id/stop_sharing"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/stop_sharing"
+        android:layout_marginTop="30dip"
+        android:visibility="gone" />
+
+</LinearLayout>

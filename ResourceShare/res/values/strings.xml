@@ -29,6 +29,9 @@
     <string name="wifi_on">Switch on Wifi</string>
     <string name="wifi_off">Switch off Wifi</string>
     
+    <string name="accelerometer">Accelerometer</string>
+    <string name="get_xyz">Get Accelerometer values</string>
+    
     <string name="gps">GPS</string>
     <string name="request_resource">Request</string>
     <string name="resource_list_access_resource">Access Resource</string>

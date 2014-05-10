@@ -78,6 +78,15 @@
             android:label="@string/app_name">
         </activity>
         
+        <activity 
+            android:name=".provider_end_resource_specific_activities.ProviderAccelerometerActivity"
+            android:label="@string/app_name">
+        </activity>
+        <activity 
+            android:name=".seeker_end_resource_specific_activities.SeekerAccelerometerActivity"
+            android:label="@string/app_name">
+        </activity>
+        
     </application>
 
 </manifest>
