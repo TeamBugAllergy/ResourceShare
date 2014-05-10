@@ -88,16 +88,9 @@ public interface Resources {
 	public static final int TAKE_PICTURE = 742;
 	public static final int IMAGE_SAVED = 743;
 	//------------------------------------------------------------------------------------------------
-
-	// FLASH: STARTS WITH 710
-	public static final int ACCELEROMETER = 750;
-	public static final int ACCELEROMETER_CONTROL = 751;
-	public static final int ACCELEROMETER_GET_XYZ = 752;
-	public static final int ACCELEROMETER_XYZ_VALUES = 752; //obj will contain x,y and z values as 'x|y|z'
-	// ------------------------------------------------------------------------------------------------
 	
 	//SPEAKER: STARTS WITH 750
-	public static final int SPEAKER = 760;
+	public static final int SPEAKER = 750;
 	//------------------------------------------------------------------------------------------------
 	
 	//ACCESSING RESOURCES

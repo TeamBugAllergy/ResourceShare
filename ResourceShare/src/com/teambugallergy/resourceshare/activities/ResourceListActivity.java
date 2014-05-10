@@ -325,10 +325,10 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 			resource_id = Resources.FLASH;
 			break;
 
-/*		case R.id.resource_list_gps:
+		case R.id.resource_list_gps:
 			resource_id = Resources.GPS;
 			break;
-*/
+
 		case R.id.resource_list_wifi:
 			resource_id = Resources.WIFI;
 			break;
@@ -336,10 +336,6 @@ public class ResourceListActivity extends Activity implements OnClickListener {
 		case R.id.resource_list_camera:
 			resource_id = Resources.CAMERA;
 			break;
-			
-		case R.id.resource_list_accelerometer:
-			resource_id = Resources.ACCELEROMETER;
-			break;	
 
 		// TODO: other resources.
 

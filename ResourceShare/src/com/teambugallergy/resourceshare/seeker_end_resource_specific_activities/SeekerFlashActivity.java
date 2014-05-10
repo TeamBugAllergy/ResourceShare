@@ -90,7 +90,7 @@ public class SeekerFlashActivity extends Activity {
 				}
 				else// if( Integer.parseInt( msg.obj.toString() ) == Resources.SHARING_STOPPED)
 				{
-	/*				//Disable the UI to not allow the user to start using the flash :)
+	/*				//Disable the UI to allow the user to start using the flash :)
 					flash_switch.setEnabled(false);
 					
 					//display the button to stop sharing

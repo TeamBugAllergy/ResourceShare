@@ -5,7 +5,6 @@ import com.teambugallergy.resourceshare.bluetooth.ConnectedDevice;
 import com.teambugallergy.resourceshare.bluetooth.RemoteSeekerDevice;
 import com.teambugallergy.resourceshare.bluetooth.ServerThread;
 import com.teambugallergy.resourceshare.constants.Resources;
-import com.teambugallergy.resourceshare.resources.MyAccelerometer;
 import com.teambugallergy.resourceshare.resources.MyCamera;
 import com.teambugallergy.resourceshare.resources.MyFlash;
 import com.teambugallergy.resourceshare.resources.MyWifi;
@@ -221,12 +220,6 @@ public class ProviderActivity extends Activity {
 							.availability();
 					break;
 					
-				case Resources.ACCELEROMETER:
-					//just to check for availability
-					resource_availability = new MyAccelerometer(providerActivityContext)
-							.availability();
-					break;	
-					
 				// TODO: for other the resources
 
 				default:
@@ -408,32 +401,32 @@ public class ProviderActivity extends Activity {
 		// Context of this Activity used by inner classes
 		providerActivityContext = this;
 
-		// TextView to display the information about connected seeker device
+		// TextView to display the informaion about connected seeker device
 		connected_device_info = (TextView) findViewById(R.id.connected_device);
 
-		// below calls will be made in onResume()
+		// below cals will be made in onResume()
 		// seeker_device = new RemoteSeekerDevice(providerActivityHandler);
 		// startListening();
 
-		// Until that, Display the dialog object of CustomDialog
+		// Untill that, Display the dialog object of CustomDialog
 		dialog = new CustomDialog(this, "Waiting for request...",
 				"Listening for requests from devices. Please wait...");
 		// display the dialog
 		dialog.show();
 		
-		//initializing
+		//initializeing
 		started_resource_activity = false;
 	}
 
 	/**
-	 * Starts listening for connection requests from seeker devices and
-	 * displays a dialog with progress bar.
+	 * Starts listening for connection requests from seeker devieces and
+	 * displays a dialog with progressbar.
 	 */
 	private void startListening() {
 
 		// LogMsg("INSIDE:startListening");
 
-		// start listening to requests
+		// start listening to rwquests
 		// ONLY if server_socket has been obtained successfully
 		if (seeker_device.obtainServerSocket() == true) {
 
@@ -482,7 +475,7 @@ public class ProviderActivity extends Activity {
 	}
 
 	/**
-	 * Stops listening to connection requests from seeker devices
+	 * Stops listening to connection requests from seeker devieces
 	 */
 	@Override
 	protected void onStop() {

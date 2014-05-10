@@ -161,7 +161,7 @@ public class SeekerActivity extends Activity implements OnClickListener,
 				// for each device in the array,
 				for (int i = 0; device_list[i] != null; i++) {
 
-					// search connected_device_list[] for device_list[i]
+					// serach connected_device_list[] for device_list[i]
 					int flag = 0;
 					for (int j = 0; connected_device_list[j] != null; j++) {
 						// if connected+device_list[] has this device
@@ -190,7 +190,7 @@ public class SeekerActivity extends Activity implements OnClickListener,
 						list.addItem(new String[] { device_list[i].getName(),
 								SeekerActivity.STATUS_CONNECTED, "1" });
 
-						LogMsg("Changing the color to green");
+						LogMsg("HERE:changing the color to green");
 
 						// set the color of the row to GREEN
 						list.changeColor(SeekerActivity.GREEN, i);
@@ -379,7 +379,7 @@ public class SeekerActivity extends Activity implements OnClickListener,
 			// Its value will be reset to -1 after using it by the Handler.
 			clicked_device_index = arg2;
 
-			// If you get the socket successfully then try to connect it.
+			// If you get the socket succesfully then try to connect it.
 			// The status of the connectivity will be sent by Message Handlers
 			// from
 			// RemoteProviderDevice
@@ -389,14 +389,14 @@ public class SeekerActivity extends Activity implements OnClickListener,
 				// The result will be sent through messages.
 				provider_device.connectToDevice();
 
-				// Until that, Display the dialog object of CustomDialog
+				// Untill that, Display the dialog object of CustomDialog
 				dialog = new CustomDialog(this, "Connecting...",
 						"Trying to connect the device.Please wait...");
 				// display the dialog
 				dialog.show();
 
 				// This dialog will be closed automatically if the connection is
-				// successful
+				// successfull
 				// Else the OK button will be displayed.
 
 			}
@@ -518,7 +518,7 @@ public class SeekerActivity extends Activity implements OnClickListener,
 
 	/**
 	 * Stop scanning for devices once this activity pauses
-	
+	 */
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -530,8 +530,7 @@ public class SeekerActivity extends Activity implements OnClickListener,
 		}
 
 	}
- */
-	
+
 	/**
 	 * Stop scanning for devices once this activity stops
 	 */
