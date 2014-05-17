@@ -29,34 +29,32 @@ public final class R {
         public static final int ic_launcher=0x7f020000;
     }
     public static final class id {
-        public static final int bluetooth_switch=0x7f080008;
-        public static final int clicked_image=0x7f080005;
-        public static final int connected_device=0x7f08000b;
-        public static final int connectivity_status=0x7f08001c;
-        public static final int device_name=0x7f08001b;
-        public static final int display_clicked_image=0x7f080006;
-        public static final int flash_switch=0x7f080007;
+        public static final int bluetooth_switch=0x7f080006;
+        public static final int connected_device=0x7f080009;
+        public static final int connectivity_status=0x7f08001a;
+        public static final int device_name=0x7f080019;
+        public static final int flash_switch=0x7f080005;
         public static final int get_xyz=0x7f080000;
-        public static final int list=0x7f080015;
-        public static final int message=0x7f080018;
-        public static final int next=0x7f080016;
-        public static final int ok=0x7f08001a;
-        public static final int progress_bar=0x7f080019;
-        public static final int provide_resource=0x7f080009;
-        public static final int refresh=0x7f080014;
-        public static final int resource_list_accelerometer=0x7f080010;
-        public static final int resource_list_access_resource=0x7f080013;
-        public static final int resource_list_camera=0x7f08000f;
-        public static final int resource_list_flash=0x7f08000d;
-        public static final int resource_list_radio_group=0x7f08000c;
-        public static final int resource_list_request_button=0x7f080011;
-        public static final int resource_list_requested_resource_status=0x7f080012;
-        public static final int resource_list_wifi=0x7f08000e;
-        public static final int seek_resource=0x7f08000a;
+        public static final int list=0x7f080013;
+        public static final int message=0x7f080016;
+        public static final int next=0x7f080014;
+        public static final int ok=0x7f080018;
+        public static final int progress_bar=0x7f080017;
+        public static final int provide_resource=0x7f080007;
+        public static final int refresh=0x7f080012;
+        public static final int resource_list_accelerometer=0x7f08000e;
+        public static final int resource_list_access_resource=0x7f080011;
+        public static final int resource_list_camera=0x7f08000d;
+        public static final int resource_list_flash=0x7f08000b;
+        public static final int resource_list_radio_group=0x7f08000a;
+        public static final int resource_list_request_button=0x7f08000f;
+        public static final int resource_list_requested_resource_status=0x7f080010;
+        public static final int resource_list_wifi=0x7f08000c;
+        public static final int seek_resource=0x7f080008;
         public static final int sharing_status=0x7f080002;
         public static final int stop_sharing=0x7f080003;
         public static final int take_picture=0x7f080004;
-        public static final int wifi_switch=0x7f080017;
+        public static final int wifi_switch=0x7f080015;
         public static final int xyz_values=0x7f080001;
     }
     public static final class layout {

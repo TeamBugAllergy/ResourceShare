@@ -11,17 +11,13 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -61,21 +57,6 @@ public class ProviderCameraActivity extends Activity{
 	 */
 	private static Button stop_sharing;
 	
-	/**
-	 * Button to display the last clicked image.
-	 */
-	private static Button display_clicked_image;
-	
-	/**
-	 * Name of the previously saved image
-	 */
-	private static String clicked_image_name = null;
-	
-	/**
-	 * ImageView to display last clicked image
-	 */
-	private static ImageView clicked_image;
-	
 	// -----------------------------------------------------------------------------------
 		/**
 		 * Handler to receive messages.
@@ -96,30 +77,18 @@ public class ProviderCameraActivity extends Activity{
 					LogMsg("Taking the picture.");
 					//Toast.makeText(providerCameraActivityContext, "Taking the picture.", Toast.LENGTH_SHORT).show();
 				}
+								
+			}
+			//if the message is IMAGE_DATA
+			else if(msg.what == Resources.IMAGE_DATA)
+			{
+				//This is just to notify the provider that image data has been sent to the seeker device.
+				LogMsg("Image data has been sent to the " + connected_seeker_device.getDevice().getName());
 				
 				//again wait for messages from seker device
 				connected_seeker_device.receiveData();
-			}
-			//if the message is IMAGE_SAVED
-			else if(msg.what == Resources.IMAGE_SAVED)
-			{
+				LogMsg("Waiting for Other messages");
 				
-				//msg.obj contains the name of the image that has been saved.
-				
-				//FORWARD the same message to connected seeker device. 
-				//data sent 'IMAGE_SAVED:image_name'
-				connected_seeker_device.sendData( (Resources.IMAGE_SAVED + ":" + msg.obj.toString() ).getBytes() );
-				LogMsg("Forwarding the IMAGE_SAVED message");
-				
-				//save the name of the image , It is used to display the image later
-				clicked_image_name = msg.obj.toString();
-				
-				//display the button to display the image
-				display_clicked_image.setVisibility(View.VISIBLE);
-				//display the image
-				clicked_image.setVisibility(View.VISIBLE);
-				
-				LogMsg("IMAGE_SAVED: "+clicked_image_name);
 			}
 			
 			//if the message is SHARING_CONTROL
@@ -318,53 +287,21 @@ public class ProviderCameraActivity extends Activity{
 				}
 			);
 			
-			//image view to display the clicked image
-			clicked_image = (ImageView)findViewById(R.id.clicked_image);
-			
-			//button to display the clicked image
-			display_clicked_image = (Button)findViewById(R.id.display_clicked_image);
-			display_clicked_image.setOnClickListener(new OnClickListener() {
-				
-				@Override
-				public void onClick(View v) {
-
-					if(v.getId() == display_clicked_image.getId())
-					{
-						if(clicked_image_name != null)
-						{
-							//resize the saved image and display the image 'clicked_image_name' in the ImageView.
-							Bitmap	bmp = BitmapFactory.decodeFile(Environment.getExternalStorageDirectory() + "/" + clicked_image_name);
-			              if(bmp != null)
-			              {
-							int nh = (int) ( bmp.getHeight() * (512.0 / bmp.getWidth()) );
-			            	Bitmap scaled = Bitmap.createScaledBitmap(bmp, 512, nh, true);
-			            	clicked_image.setImageBitmap(scaled);
-			            
-			            	LogMsg("Displayed the image " + clicked_image_name);
-			            	
-			            	//recycle the bmp
-			            	if(bmp != null)
-			            	{
-			            		bmp.recycle();
-			            		bmp = null;
-			            	}
-			            	
-							//hide the button
-							display_clicked_image.setVisibility(View.GONE);
-							//this will be made visible after getting another image from IMAGE_SAVED
-			              }
-						}
 					
-					}
-				}	
-			});
-						
 		} else {
 			LogMsg("There is no Connected Seeker Device.");
 		}
 
 	}
 	
+	/**
+	 * Returns a reference to the connected_seeker_device object of object of this class. 
+	 * @return ConnectedDevice object 
+	 */
+	public static ConnectedDevice getConnectedSeekerDevice()
+	{
+		return connected_seeker_device;
+	}
 	
 	/**
 	 * Stops the camera preview and releases it.
@@ -380,7 +317,9 @@ public class ProviderCameraActivity extends Activity{
 		connected_seeker_device.sendData( (Resources.SHARING_STATUS + ":" + Resources.SHARING_STOPPED).getBytes() );
 		
 		//display the message
-		//sharing_status.setText("Sharing the camera has been stopped.");
+		sharing_status.setText("Sharing the camera has been stopped.");
+		Toast.makeText(providerCameraActivityContext, "Notifying the " + connected_seeker_device.getDevice().getName(), Toast.LENGTH_SHORT).show();
+		
 	}
 	
 	/**

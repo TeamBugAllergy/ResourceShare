@@ -4,22 +4,26 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
+import org.apache.http.util.ByteArrayBuffer;
+
+import com.teambugallergy.resourceshare.constants.Resources;
+
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
 import android.util.Log;
 
 /**
- * This class has all the methods required for initializing streams,reading and wrinting of data.
- * It also implements Parcelable interface to make it pass-able through intents.
- * <i>
- * <br/>--------------------------------------
- * <br/>Constants of this class starts with 6 
- * <br/>--------------------------------------
- * <br/>
+ * This class has all the methods required for initializing streams,reading and
+ * wrinting of data. It also implements Parcelable interface to make it
+ * pass-able through intents. <i> <br/>
+ * -------------------------------------- <br/>
+ * Constants of this class starts with 6 <br/>
+ * -------------------------------------- <br/>
  * </i>
  * 
  * 02-04-2014
+ * 
  * @author Adiga@TeamBugAllergy
  */
 public class ConnectedDevice {
@@ -28,12 +32,12 @@ public class ConnectedDevice {
 	 * Thread which writes data to the Remote Device
 	 */
 	Thread writer;
-			
+
 	/**
 	 * Thread which reads data from the Remote Device
 	 */
-	Thread reader;
-			
+	//Thread reader;
+
 	/**
 	 * Device to be connected to.
 	 */
@@ -44,19 +48,21 @@ public class ConnectedDevice {
 	 * RemoteDevice.
 	 */
 	private BluetoothSocket socket = null;
-	
+
 	/**
 	 * Index of the ConnectedDevice object in connected_device_list[] array.
-	 * This index will be added to msg.arg2 of the message that has been read, and sent to ResourceListActivity.
-	 * Used by receiveData() to detect the sender of the message.
+	 * This index will be added to msg.arg2 of the message that has been read,
+	 * and sent to ResourceListActivity. Used by receiveData() to detect the
+	 * sender of the message.
 	 */
 	private int device_index = -1;
-	
-	/** Handler of caller class
+
+	/**
+	 * Handler of caller class
 	 * 
 	 */
 	private static Handler callerHandler;
-	
+
 	/**
 	 * InputStream used to read the data from socket connection
 	 */
@@ -67,90 +73,107 @@ public class ConnectedDevice {
 	private OutputStream output_stream = null;
 
 	/**
-	 * Flag used to stop the thread. It is set to true by stopReceivingData() method
+	 * Flag used to stop the thread. It is set to true by stopReceivingData()
+	 * method
 	 */
 	private Boolean stop = false;
+
+	/**
+	 * This flag indicates whether image data has been read
+	 * completly or not.
+	 */
+	private static Boolean reading_image_data = false;
+	
+	//testing purpose
+	private static int reader_thread_count = 0;
 	
 	// -----------------------------------------------------------------------------------
-	
+
 	/**
-	 * Initializes the Remote device, socket associated with the connection for data transfer.
+	 * Initializes the Remote device, socket associated with the connection for
+	 * data transfer.
 	 * 
-	 * @param device Device to be connected to.
-	 * @param handler Handler of the object creator, which wishes to recieve the message.
+	 * @param device
+	 *            Device to be connected to.
+	 * @param handler
+	 *            Handler of the object creator, which wishes to recieve the
+	 *            message.
 	 */
-	public ConnectedDevice(BluetoothDevice device, BluetoothSocket socket, Handler handler) {
-		
+	public ConnectedDevice(BluetoothDevice device, BluetoothSocket socket,
+			Handler handler) {
+
 		LogMsg("");
 
-		//LogMsg("HERE:server- "+ socket +" device- " + device);
-		
+		// LogMsg("HERE:server- "+ socket +" device- " + device);
+
 		// device to be connected to
 		this.device = device;
 
 		// initialize the socket
 		this.socket = socket;
-				
-		//Handler of the caller
+
+		// Handler of the caller
 		this.callerHandler = handler;
-		
-		//Intialize the IO streams
+
+		// Intialize the IO streams
 		initializeIOStreams();
 	}
-	
+
 	/**
-	 * Sets the new <i>handler</i> as the <i>callerHandler</i> of this object. 
+	 * Sets the new <i>handler</i> as the <i>callerHandler</i> of this object.
+	 * 
 	 * @param handler
 	 */
-	public void setCallerHandler(Handler handler)
-	{
+	public void setCallerHandler(Handler handler) {
 		callerHandler = handler;
 	}
-	
+
 	/**
 	 * Sets the device_index of this ConnectedDevice object to <i>index</i>.
-	 * @param index index of this object in connected_device_list[] array of ResourceListActivity.
+	 * 
+	 * @param index
+	 *            index of this object in connected_device_list[] array of
+	 *            ResourceListActivity.
 	 */
-	public void setDeviceIndex(int index)
-	{
+	public void setDeviceIndex(int index) {
 		device_index = index;
 	}
-	
+
 	/**
 	 * Gets the device_index of this ConnectedDevice object.
-	 * @return device_index i.e index of this object in connected_device_list[] array of ResourceListActivity.
+	 * 
+	 * @return device_index i.e index of this object in connected_device_list[]
+	 *         array of ResourceListActivity.
 	 */
-	public int getDeviceIndex()
-	{
+	public int getDeviceIndex() {
 		return device_index;
 	}
-	
+
 	/**
-	 * Gets object of BluetoothDevice that is stored as <i>device</i>. 
+	 * Gets object of BluetoothDevice that is stored as <i>device</i>.
+	 * 
 	 * @return <b>device</b> of ConnectedDevice object.
 	 */
-	public BluetoothDevice getDevice()
-	{
+	public BluetoothDevice getDevice() {
 		return device;
 	}
-	
+
 	/**
-	 * Gets object of BluetoothSocket that is stored as <i>socket</i>. 
+	 * Gets object of BluetoothSocket that is stored as <i>socket</i>.
+	 * 
 	 * @return <b>socket</b> of this ConnectedDevice object.
 	 */
-	public BluetoothSocket getSocket()
-	{
+	public BluetoothSocket getSocket() {
 		return socket;
 	}
-	
+
 	/**
 	 * Obtains Input and Output Streams associated with the established
 	 * connection. Only after calling this method, data transfer can be
 	 * performed.
 	 * 
-	 * @return 
-	 *         Returns <b>true</b> if input-output streams have been obtained successfully, else 
-	 *         returns <b>false</b>.
+	 * @return Returns <b>true</b> if input-output streams have been obtained
+	 *         successfully, else returns <b>false</b>.
 	 */
 	private Boolean initializeIOStreams() {
 
@@ -227,49 +250,156 @@ public class ConnectedDevice {
 	 */
 	public void receiveData() {
 
-		reader = new Thread(new Runnable() {
+		// TODO: terminate the 'reader' if it is still alive and then start new
+		// thread
+		LogMsg("In the receiveData().");
+
+		//reset the flag
+		stop = false;
+		
+		Thread reader = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 
-				byte[] buffer = new byte[1024]; // buffer store for the stream
-				int bytes; // number of bytes returned from read()
+				reader_thread_count++;
+				LogMsg("Reader Thread Count:" + reader_thread_count);
+								
+				// number of bytes returned from read()
+				int bytes;
 
+				// data received in string form
 				String data = null;
 
+				/**
+				 * Buffer of infinite length to store the image data read in
+				 * parts
+				 */
+				ByteArrayBuffer inf_buf = new ByteArrayBuffer(1024);
+
+				//intially type of the message will be unknown
+				reading_image_data = false;
+						
 				// Keep listening to the input_stream until an exception occurs
 				// OR caller wants to stop receiving data
-				while (true) {
-				//while ( stop == false) {
-					
+				//while (true) {
+				while ( stop == false) {
+
 					LogMsg("Waiting for data from " + device.getName());
-					
+
 					try {
+						byte[] buffer = new byte[1024 * 1024 * 4]; // buffer store for the stream
+						
 						// Reads from the InputStream
 						bytes = input_stream.read(buffer);
 
-						// data in String form
-						data = new String(buffer, 0, bytes);
+						// 744 is IMAGE_DATA
+						// ***either if it is start of image data or in the
+						// middle of the image data
+						if ((buffer[0] == 7 && buffer[1] == 4 && buffer[2] == 4 )
+								|| reading_image_data == true) {
+							LogMsg("***Image Data Message Received: " + buffer[bytes-3] +","+ buffer[bytes-2] +","+ buffer[bytes-1]);
 
-						//TODO: data contains <what:data> formate separate 'what' and 'data' from it
-						String[] data_values = data.split(":");
+							//for the first time only,
+							if(reading_image_data == false)
+							{
+								// remove first 3 bytes and get actual image data
+								// append it to the inf_buf ByteArrayBuffer
+								inf_buf.append(buffer, 3, bytes);
+							}
+							else
+							{
+								//ssimply append the read bytes
+								inf_buf.append(buffer, 0, bytes);
+							}
+							// set a flag to indicate that image data is being
+							// read
+							reading_image_data = true;//this is only for start of the image data
+							
+							
+							//***End of the image data is noted by 744 at the end
+							
+							// after completely reading, send the inf_buf to
+							// callerHandler,
+							if ( buffer[bytes-3] == 7 && buffer[bytes-2] == 4 && buffer[bytes-1] == 4 ) 
+							{
+								LogMsg("***Image has been read completely.");
 
-						// Send the obtained bytes to the UI activity
-						//device_index tells the callerHandler from which device, the data has been received.
-						callerHandler.obtainMessage(Integer.parseInt(data_values[0]), bytes, device_index, data_values[1]).sendToTarget();
+								//TODO:check this:- remove the delimeter '744' from the image data,
+								inf_buf.setLength(inf_buf.length()-3);
+								
+								LogMsg("Sending the complete image data to callerHandler: " + inf_buf.toByteArray().toString());
+								
+								// TODO:send the complete image data once to the
+								// callerHandler
+								// Send the obtained bytes to the UI activity
+								// device_index tells the callerHandler from which
+								// device, the data has been received.
+								// Here 'what' is known i.e IMAGE_DATA
+								callerHandler.obtainMessage(Resources.IMAGE_DATA,
+										inf_buf.length(), device_index,
+										inf_buf.toByteArray()).sendToTarget();
 
-						LogMsg("Data received from " + device.getName() + ": "
-								+ data_values[0] +","+ data_values[1]);
+								// reset the flag reading_image_data to false
+								reading_image_data = false; // not needed , since
+															// the thread will be
+															// terminated
+								
+								//terminate the thread
+								stop = true;
+
+							}
+							
+							//LogMsg("Data received from " + device.getName()
+							//		+ ": " + inf_buf.toByteArray().toString());
+						}
+						// If it is not the start of image data and image data
+						// is not being read
+						else {
+							LogMsg("Normal Message");
+
+							// data in String form
+							data = new String(buffer, 0, bytes);
+
+							// TODO: data contains <what:data> formate separate
+							// 'what' and 'data' from it
+							String[] data_values = data.split(":");
+
+							LogMsg("Data received from " + device.getName()
+									+ ": " + data_values[0] + ","
+									+ data_values[1]);
+
+							// Send the obtained bytes to the UI activity
+							// device_index tells the callerHandler from which
+							// device, the data has been received.
+							callerHandler.obtainMessage(
+									Integer.parseInt(data_values[0]), bytes,
+									device_index, data_values[1])
+									.sendToTarget();
+							
+							//to terminate the thread
+							stop = true;
+						}
 
 					} catch (IOException e) {
 						LogMsg("Data received completely from "
-								+ device.getName() + ":" + data);
+								+ device.getName());
+						
 						// go out of the while loop and terminate the Thread.
-						break;
+						break;						
+						
+					} catch (NumberFormatException e) {
+						LogMsg("ERROR: Wrong data received- " + e);
 					}
 				}
-
+				
 				LogMsg("Terminating the reading Thread");
+				
+				reader_thread_count--;
+				LogMsg("Reader Thread Count:" + reader_thread_count);
+				
+				return;
+
 			}// end of run()
 		});
 
@@ -279,32 +409,36 @@ public class ConnectedDevice {
 	}
 
 	/**
-	 * Called whenever the caller does not want to receive data.  
+	 * Called whenever the caller does not want to receive data.
 	 */
-/*	public void stopReceivingData()
-	{
-		//It makes the 'stop' flag to 'true'
-		//which makes the while() loop in the ReceiveData() method to stop
-		//and terminates the thread
-		stop = true;
-		LogMsg("Stopped listening to data");
-	}
-*/	
+	/*
+	 * public void stopReceivingData() { //It makes the 'stop' flag to 'true'
+	 * //which makes the while() loop in the ReceiveData() method to stop //and
+	 * terminates the thread stop = true; LogMsg("Stopped listening to data"); }
+	 */
 	/**
-	 * Closes the socket associated with the connection and terminates the connection.
+	 * Closes the socket associated with the connection and terminates the
+	 * connection.
 	 */
-	public void disconnect()
-	{
-		if(socket != null)
+	public void disconnect() {
+		
+		if (socket != null)
+		{
 			try {
-				LogMsg("***Closing the socket and disconnecting.***");
-				socket.close();
+				LogMsg("***Closing the IO streams & socket and disconnecting.***");
+			
+				//close the streams
+				input_stream.close();
+				output_stream.close();
 				
+				socket.close();
+
 			} catch (IOException e) {
 				LogMsg("Error in closing the socket- " + e);
 			}
+		}
 	}
-	
+
 	private void LogMsg(String msg) {
 		Log.d("ConnectedDevice", msg);
 	}

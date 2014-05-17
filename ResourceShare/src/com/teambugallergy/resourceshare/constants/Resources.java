@@ -86,7 +86,11 @@ public interface Resources {
 	public static final int CAMERA = 740;
 	public static final int CAMERA_CONTROL = 741;
 	public static final int TAKE_PICTURE = 742;
-	public static final int IMAGE_SAVED = 743;
+	public static final int IMAGE_DATA = 743;
+	/**
+	 * Used to defferentiate the normal messages from image data messages
+	 */
+	public static final int IMAGE_DATA_IDENTIFIER = 744;
 	//------------------------------------------------------------------------------------------------
 
 	// FLASH: STARTS WITH 710

@@ -1,10 +1,17 @@
 package com.teambugallergy.resourceshare.seeker_end_resource_specific_activities;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -65,7 +72,18 @@ public class SeekerCameraActivity extends Activity {
 	 * Dialog that says the user to wait till the image is saved.
 	 */
 	private static CustomDialog dialog;
-	
+
+	/**
+	 * Number of potential provider devices that are currently available.
+	 */
+	private static int potential_provider_num = 0;
+
+	/**
+	 * Number of IMAGE_DATA messages received. <i>potential_provider_num</i> and
+	 * this variable are used to close the waiting diaolg after receiveing the
+	 * image data from all the providers.
+	 */
+	private static int image_data_message_num = 0;
 	// -----------------------------------------------------------------------------------
 	/**
 	 * Handler to receive messages.
@@ -119,18 +137,62 @@ public class SeekerCameraActivity extends Activity {
 				}
 
 			}
+
+			// if the message is IMAGE_DATA
+			else if (msg.what == Resources.IMAGE_DATA) {
+
+				// keep track of the number of providers that have sent the
+				// IMAGE_DATA
+				image_data_message_num++;
+
+				// set file destination and file name
+				File destination = new File(
+						Environment.getExternalStorageDirectory(),
+						potential_provider_list[sender_index].getDevice()
+								.getName() + ".jpg");
 			
-			//if the message is IMAGE_SAVED
-			else if(msg.what == Resources.IMAGE_SAVED)
-			{
-				//close the custom dialog
-				dialog.closeDialog();
+				//data received by the provider device
+				byte[] data = (byte[]) msg.obj;
 				
-				LogMsg("Closing the dialog IMAGE_SAVED");
-				
-				//TODO:ERROR:- Only after all the potential provider devices send this message then close the dialog
+				try {
+					Bitmap userImage = BitmapFactory.decodeByteArray(data, 0,
+							data.length);
+
+					//if bitmap is decoded successfully
+					if (userImage != null) { 
+						// set file out stream
+						FileOutputStream out = new FileOutputStream(destination);
+						// set compress format quality and stream
+						userImage.compress(Bitmap.CompressFormat.JPEG, 30, out);
+
+						LogMsg("Saved the image");
+
+						// also recycle the userImage
+						if (userImage != null)
+							userImage.recycle();
+
+					} else {
+						Toast.makeText(seekerCameraActivityContext,
+								"Image couldn't be saved.", Toast.LENGTH_LONG).show();
+					}
+				} catch (FileNotFoundException e) {
+
+					LogMsg("ERROR: In saving the image- " + e);
+				} catch (Exception e) {
+					LogMsg("ERROR: In saving the image data- " + e);
+				}
+
+				// close the custom dialog
+				// ONLY if all the providers have sent the IMAGE_DATA message
+				if (potential_provider_num == image_data_message_num) {
+					dialog.closeDialog();
+					LogMsg("Closing the dialog IMAGE_DATA");
+					// Only after all the potential provider devices send this
+					// message then close the dialog
+				}
+
 			}
-			
+
 			// message is RESOURCE_ACCESS_REQUEST
 			else if (msg.what == Resources.RESOURCE_ACCESS_REQUEST) {
 
@@ -241,7 +303,8 @@ public class SeekerCameraActivity extends Activity {
 											// Note down this
 											// potential_provider_device
 											// because ONLY this provider should
-											// not be sent messages to take the pictures on the camera.
+											// not be sent messages to take the
+											// pictures on the camera.
 
 											// remove this provider and shift
 											// remaining devices in the array to
@@ -278,32 +341,50 @@ public class SeekerCameraActivity extends Activity {
 		// This toggle button is made visible only after getting a
 		// RESOURCE_ACCESS_GRANT message
 		take_picture = (Button) findViewById(R.id.take_picture);
-		take_picture.setOnClickListener( new OnClickListener() {
-			
+		take_picture.setOnClickListener(new OnClickListener() {
+
 			@Override
 			public void onClick(View v) {
 
-				//if take_picture has been clicked
-				if(v.getId() == take_picture.getId())
-				{
-					//for all the potential provideres
-					for (int i = 0; potential_provider_list[i] != null ;i ++)
-					{
-						//send the TAKE_PICTURE  message to all the potential providers to take the picture
-						potential_provider_list[i].sendData( (Resources.CAMERA_CONTROL + ":" + Resources.TAKE_PICTURE).getBytes() );
+				// if take_picture has been clicked
+				if (v.getId() == take_picture.getId()) {
+					// re-intialize every time a request is sent to all the
+					// providers
+					image_data_message_num = 0;
+					potential_provider_num = 0;
+					// abouve variables are used in IMAGE_DATA msg handler block
+
+					// for all the potential provideres
+					for (int i = 0; potential_provider_list[i] != null; i++) {
+						// send the TAKE_PICTURE message to all the potential
+						// providers to take the picture
+						potential_provider_list[i]
+								.sendData((Resources.CAMERA_CONTROL + ":" + Resources.TAKE_PICTURE)
+										.getBytes());
 						LogMsg("Sending TAKE_PICTURE to potential provider devices");
-						//Toast.makeText(seekerCameraActivityContext, "Taking the picture", Toast.LENGTH_SHORT).show();
+						// Toast.makeText(seekerCameraActivityContext,
+						// "Taking the picture", Toast.LENGTH_SHORT).show();
+
+						//wait for IMAGE_DATA from the all the provider devices
+						potential_provider_list[i].receiveData();
+						LogMsg("Waiting for IMAGE_DATA from " + potential_provider_list[i].getDevice().getName());
 						
-						sharing_status.setText("Picture has been taken");
 						
+						sharing_status.setText("Picture has been taken.");
+
+						// count the number of potential providers
+						potential_provider_num++;
+
 					}
-					
-					//display a CustomDialog with ProgressBar
-					dialog = new CustomDialog(seekerCameraActivityContext, "Saving picture...",
+
+					// display a CustomDialog with ProgressBar
+					dialog = new CustomDialog(seekerCameraActivityContext,
+							"Saving picture...",
 							"Image is being saved.Please wait...");
 					// display the dialog
 					dialog.show();
-					//This dialog will be closed once this activity receives IMAGE_SAVED message from all of the potential providers
+					// This dialog will be closed once this activity receives
+					// IMAGE_SAVED message from all of the potential providers
 
 				}
 			}
