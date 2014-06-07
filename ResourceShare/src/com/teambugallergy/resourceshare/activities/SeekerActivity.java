@@ -13,6 +13,7 @@ import android.bluetooth.BluetoothDevice;
 import android.content.Context;
 import android.content.Intent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.os.Bundle;
 import android.os.Handler;
@@ -306,6 +307,12 @@ public class SeekerActivity extends Activity implements OnClickListener,
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
+		//Intial setup
+				//Keep the screen on
+				//This flag will be cleared when this activity is destroyed
+				getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		
 		// Common ListView to display the devices
 		setContentView(R.layout.activity_seeker);
 

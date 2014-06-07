@@ -161,4 +161,12 @@ public interface Resources {
 	 */
 	public static final int DISCONNECT = 809;
 	//------------------------------------------------------------------------------------------------
+	
+	/**
+	 * EndOfData (EOD)
+	 * Delimeter that indicates the end of a complete data sent by a device.
+	 * This delimeter is used to stop waiting for the data, by the receiveData() method of ConnectedDevice 
+	 */
+	public static final int EOD = 810;
+	//------------------------------------------------------------------------------------------------
 }

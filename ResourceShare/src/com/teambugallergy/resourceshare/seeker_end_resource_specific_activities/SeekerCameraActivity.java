@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
@@ -84,6 +85,12 @@ public class SeekerCameraActivity extends Activity {
 	 * image data from all the providers.
 	 */
 	private static int image_data_message_num = 0;
+	
+	/**
+	 * Number of times, that the user has clicked the 'take picture' button. It is used to name the image files at seeker device.
+	 */
+	private static int num_images_taken = 0;
+	
 	// -----------------------------------------------------------------------------------
 	/**
 	 * Handler to receive messages.
@@ -149,7 +156,7 @@ public class SeekerCameraActivity extends Activity {
 				File destination = new File(
 						Environment.getExternalStorageDirectory(),
 						potential_provider_list[sender_index].getDevice()
-								.getName() + ".jpg");
+								.getName() + num_images_taken + ".jpg");
 			
 				//data received by the provider device
 				byte[] data = (byte[]) msg.obj;
@@ -157,6 +164,8 @@ public class SeekerCameraActivity extends Activity {
 				try {
 					Bitmap userImage = BitmapFactory.decodeByteArray(data, 0,
 							data.length);
+
+					LogMsg("Image data length: " + data.length);
 
 					//if bitmap is decoded successfully
 					if (userImage != null) { 
@@ -167,11 +176,16 @@ public class SeekerCameraActivity extends Activity {
 
 						LogMsg("Saved the image");
 
+						Toast.makeText(seekerCameraActivityContext,
+								"Image has been saved.", Toast.LENGTH_SHORT).show();
+						
 						// also recycle the userImage
 						if (userImage != null)
 							userImage.recycle();
 
 					} else {
+						LogMsg("Image couldn't be saved");
+						
 						Toast.makeText(seekerCameraActivityContext,
 								"Image couldn't be saved.", Toast.LENGTH_LONG).show();
 					}
@@ -222,8 +236,10 @@ public class SeekerCameraActivity extends Activity {
 					// display the button to stop sharing
 					stop_sharing.setVisibility(View.VISIBLE);
 
+					//TODO:Note- Below line is commented because there wer 2 reader threads at a time...
 					// Wait for SHARING_STATUS messages from provider devices
-					potential_provider_list[msg.arg2].receiveData();
+					//potential_provider_list[msg.arg2].receiveData();
+					
 				}
 
 				// if provider has denied the resource access
@@ -324,7 +340,8 @@ public class SeekerCameraActivity extends Activity {
 			}
 			// Unexpected messages
 			else {
-				LogMsg("Unexpected message received in this Hnadler.");
+				LogMsg("Unexpected message received in this Handler.");
+				LogMsg("msg.wht:" + msg.what + ", msg.obj:" + msg.obj);
 			}
 		}
 	};
@@ -335,6 +352,11 @@ public class SeekerCameraActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		//Intial setup
+				//Keep the screen on
+				//This flag will be cleared when this activity is destroyed
+				getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+				
 		// same layout is also used by ProviderFlashActivity
 		setContentView(R.layout.activity_camera);
 
@@ -354,6 +376,9 @@ public class SeekerCameraActivity extends Activity {
 					potential_provider_num = 0;
 					// abouve variables are used in IMAGE_DATA msg handler block
 
+					//keep the number of images clicked. It is used to name the images
+					num_images_taken++;
+					
 					// for all the potential provideres
 					for (int i = 0; potential_provider_list[i] != null; i++) {
 						// send the TAKE_PICTURE message to all the potential
@@ -366,6 +391,7 @@ public class SeekerCameraActivity extends Activity {
 						// "Taking the picture", Toast.LENGTH_SHORT).show();
 
 						//wait for IMAGE_DATA from the all the provider devices
+						
 						potential_provider_list[i].receiveData();
 						LogMsg("Waiting for IMAGE_DATA from " + potential_provider_list[i].getDevice().getName());
 						
@@ -411,6 +437,7 @@ public class SeekerCameraActivity extends Activity {
 									.getBytes());
 
 				}
+				
 			}
 		});
 

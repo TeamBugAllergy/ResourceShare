@@ -209,26 +209,17 @@ public class MyCamera {
 			public void onPictureTaken(byte[] data, Camera camera) {
 
 				// TODO:
-				//add 7,4,4 to start of the array
-				ByteArrayBuffer tmp_buffer = new ByteArrayBuffer(3);
+				//add 744 at the start of the data[] array
+				ByteArrayBuffer buff = new ByteArrayBuffer(data.length);
 				
-				//store 743, ie Start of the IMAGE_DATA
-				tmp_buffer.append(7);
-				tmp_buffer.append(4);
-				tmp_buffer.append(4);
+				buff.append(7);
+				buff.append(4);
+				buff.append(4);
+				buff.append(data, 0, data.length);
 				
-				//now add the actual image data bytes
-				tmp_buffer.append(data, 0, data.length);
-				
-				//store 743, ie End of the IMAGE_DATA
-				tmp_buffer.append(7);
-				tmp_buffer.append(4);
-				tmp_buffer.append(4);
 				
 				//the data to be sent
-				byte[] image_data = null;
-				image_data = tmp_buffer.toByteArray();
-								
+				byte[] image_data = buff.toByteArray(); 
 				
 				// Directly send the image data bytes to the
 				// connected_seeker_device
@@ -245,7 +236,7 @@ public class MyCamera {
 						.sendToTarget();
 				LogMsg("notifying the provider device by sending IMAGE_DATA");
 				
-				LogMsg("Image Data: " + image_data[0] +","+  image_data[1] +","+ image_data[2] +": "+ image_data[image_data.length-3] +","+ image_data[image_data.length-2] +","+ image_data[image_data.length-1] );
+				LogMsg("Image Data, first 3 bytes:"+ image_data[0] +","+ image_data[1] +","+ image_data[2] );
 			}
 
 		};

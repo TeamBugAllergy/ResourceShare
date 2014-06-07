@@ -1,5 +1,7 @@
 package com.teambugallergy.resourceshare.bluetooth;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -7,7 +9,6 @@ import java.io.OutputStream;
 import org.apache.http.util.ByteArrayBuffer;
 
 import com.teambugallergy.resourceshare.constants.Resources;
-
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.os.Handler;
@@ -36,7 +37,7 @@ public class ConnectedDevice {
 	/**
 	 * Thread which reads data from the Remote Device
 	 */
-	//Thread reader;
+	// Thread reader;
 
 	/**
 	 * Device to be connected to.
@@ -76,17 +77,11 @@ public class ConnectedDevice {
 	 * Flag used to stop the thread. It is set to true by stopReceivingData()
 	 * method
 	 */
-	private Boolean stop = false;
+	//private Boolean stop = false;
 
-	/**
-	 * This flag indicates whether image data has been read
-	 * completly or not.
-	 */
-	private static Boolean reading_image_data = false;
-	
-	//testing purpose
+	// testing purpose
 	private static int reader_thread_count = 0;
-	
+
 	// -----------------------------------------------------------------------------------
 
 	/**
@@ -219,13 +214,24 @@ public class ConnectedDevice {
 
 			@Override
 			public void run() {
-
+				
 				String data = null;
 				try {
+					
+					//add the delimeter EOD (810) to end of the data
+					ByteArrayBuffer buff = new ByteArrayBuffer(bytes.length);
+					buff.append(bytes, 0, bytes.length);
+					//add 810
+					buff.append(8);
+					buff.append(1);
+					buff.append(0);
+					
+					byte[] byte_data = buff.toByteArray();
+					
 					// write the bytes[] into output_stream
-					output_stream.write(bytes);
-
-					data = new String(bytes);
+					output_stream.write(byte_data);
+					
+					data = new String(byte_data);
 					LogMsg("Data sent to " + device.getName() + ": " + data);
 
 				} catch (IOException e) {
@@ -250,13 +256,10 @@ public class ConnectedDevice {
 	 */
 	public void receiveData() {
 
-		// TODO: terminate the 'reader' if it is still alive and then start new
+		// terminate the 'reader' if it is still alive and then start new
 		// thread
 		LogMsg("In the receiveData().");
 
-		//reset the flag
-		stop = false;
-		
 		Thread reader = new Thread(new Runnable() {
 
 			@Override
@@ -264,140 +267,131 @@ public class ConnectedDevice {
 
 				reader_thread_count++;
 				LogMsg("Reader Thread Count:" + reader_thread_count);
-								
+
+				// reset the flag
+				Boolean stop = false;
+				
 				// number of bytes returned from read()
-				int bytes;
-
-				// data received in string form
-				String data = null;
-
-				/**
-				 * Buffer of infinite length to store the image data read in
-				 * parts
-				 */
-				ByteArrayBuffer inf_buf = new ByteArrayBuffer(1024);
-
-				//intially type of the message will be unknown
-				reading_image_data = false;
-						
+				int num_bytes_read;
+				int total_bytes_read = 0;
+				
+				//complete data received
+				ByteArrayOutputStream complete_data_received = new ByteArrayOutputStream(1024);
+				
+				
 				// Keep listening to the input_stream until an exception occurs
 				// OR caller wants to stop receiving data
-				//while (true) {
-				while ( stop == false) {
+				// while (true) {
+				while (stop == false) {
 
 					LogMsg("Waiting for data from " + device.getName());
 
 					try {
-						byte[] buffer = new byte[1024 * 1024 * 4]; // buffer store for the stream
+						// buffer store for the stream
+						byte[] buffer_data_received = new byte[1024]; 
+						
+						//input_stream.reset();
 						
 						// Reads from the InputStream
-						bytes = input_stream.read(buffer);
-
-						// 744 is IMAGE_DATA
-						// ***either if it is start of image data or in the
-						// middle of the image data
-						if ((buffer[0] == 7 && buffer[1] == 4 && buffer[2] == 4 )
-								|| reading_image_data == true) {
-							LogMsg("***Image Data Message Received: " + buffer[bytes-3] +","+ buffer[bytes-2] +","+ buffer[bytes-1]);
-
-							//for the first time only,
-							if(reading_image_data == false)
-							{
-								// remove first 3 bytes and get actual image data
-								// append it to the inf_buf ByteArrayBuffer
-								inf_buf.append(buffer, 3, bytes);
-							}
-							else
-							{
-								//ssimply append the read bytes
-								inf_buf.append(buffer, 0, bytes);
-							}
-							// set a flag to indicate that image data is being
-							// read
-							reading_image_data = true;//this is only for start of the image data
+						num_bytes_read = input_stream.read(buffer_data_received);
+						
+						//keep track of total number of bytes
+						total_bytes_read += num_bytes_read;
+						
+						//store it in big buffer
+						complete_data_received.write(buffer_data_received,0,num_bytes_read);
+												
+						LogMsg("Read " + num_bytes_read + " bytes ");
+						LogMsg("last 3 bytes:" + buffer_data_received[num_bytes_read-3] +","+ buffer_data_received[num_bytes_read-2] +","+ buffer_data_received[num_bytes_read-1]);
+						
+						//if the buffer[] is not full,
+						//Check using the EOD (810)...
+						if( buffer_data_received[num_bytes_read-3] == 8 && buffer_data_received[num_bytes_read-2] == 1 && buffer_data_received[num_bytes_read-1] == 0)
+						{
+							LogMsg("last 3 bytes:" + buffer_data_received[num_bytes_read-3] +","+ buffer_data_received[num_bytes_read-2] +","+ buffer_data_received[num_bytes_read-1]);
 							
+							LogMsg(total_bytes_read + " bytes of data received completely from "
+									+ device.getName());
 							
-							//***End of the image data is noted by 744 at the end
-							
-							// after completely reading, send the inf_buf to
-							// callerHandler,
-							if ( buffer[bytes-3] == 7 && buffer[bytes-2] == 4 && buffer[bytes-1] == 4 ) 
-							{
-								LogMsg("***Image has been read completely.");
-
-								//TODO:check this:- remove the delimeter '744' from the image data,
-								inf_buf.setLength(inf_buf.length()-3);
-								
-								LogMsg("Sending the complete image data to callerHandler: " + inf_buf.toByteArray().toString());
-								
-								// TODO:send the complete image data once to the
-								// callerHandler
-								// Send the obtained bytes to the UI activity
-								// device_index tells the callerHandler from which
-								// device, the data has been received.
-								// Here 'what' is known i.e IMAGE_DATA
-								callerHandler.obtainMessage(Resources.IMAGE_DATA,
-										inf_buf.length(), device_index,
-										inf_buf.toByteArray()).sendToTarget();
-
-								// reset the flag reading_image_data to false
-								reading_image_data = false; // not needed , since
-															// the thread will be
-															// terminated
-								
-								//terminate the thread
-								stop = true;
-
-							}
-							
-							//LogMsg("Data received from " + device.getName()
-							//		+ ": " + inf_buf.toByteArray().toString());
-						}
-						// If it is not the start of image data and image data
-						// is not being read
-						else {
-							LogMsg("Normal Message");
-
-							// data in String form
-							data = new String(buffer, 0, bytes);
-
-							// TODO: data contains <what:data> formate separate
-							// 'what' and 'data' from it
-							String[] data_values = data.split(":");
-
-							LogMsg("Data received from " + device.getName()
-									+ ": " + data_values[0] + ","
-									+ data_values[1]);
-
-							// Send the obtained bytes to the UI activity
-							// device_index tells the callerHandler from which
-							// device, the data has been received.
-							callerHandler.obtainMessage(
-									Integer.parseInt(data_values[0]), bytes,
-									device_index, data_values[1])
-									.sendToTarget();
-							
-							//to terminate the thread
+							//terminate the thread
 							stop = true;
 						}
 
 					} catch (IOException e) {
-						LogMsg("Data received completely from "
-								+ device.getName());
 						
+						LogMsg("Error:In reading the data- " + e);
 						// go out of the while loop and terminate the Thread.
-						break;						
-						
-					} catch (NumberFormatException e) {
-						LogMsg("ERROR: Wrong data received- " + e);
+						break;
+
 					}
+					
 				}
 				
+					//use the complete data stored in big buffer
+					byte[] complete_bytes_received = complete_data_received.toByteArray();
+					
+					//remove the last three bytes of delimeter EOD
+					ByteArrayBuffer tmp_buffer = new ByteArrayBuffer(complete_bytes_received.length - 3);
+					tmp_buffer.append(complete_bytes_received, 0, complete_bytes_received.length - 3);
+					total_bytes_read = total_bytes_read - 3;
+					
+					//save the byte without the delimeter EOD
+					byte[] byte_data = tmp_buffer.toByteArray();
+					
+					//check if data is started with 744? It denotes the image data
+					if(byte_data[0] == 7 && byte_data[1] == 4 && byte_data[2] == 4)
+					{
+						
+						LogMsg("Image data message");
+						
+						//code to send image data to SeekerCameraActivity
+						
+						// remove first 3 bytes from the data
+						ByteArrayBuffer buffer_img_data = new ByteArrayBuffer(byte_data.length - 3);
+						buffer_img_data.append(byte_data, 3, byte_data.length - 3);
+						
+						byte[] img_byte_data = buffer_img_data.toByteArray();
+						
+						// 744 is IMAGE_DATA_IDENTIFIER
+
+						// send the complete image data once to the
+						// callerHandler
+						// Send the obtained bytes to the UI activity
+						// device_index tells the callerHandler from which
+						// device, the data has been received.
+						// Here 'what' is known i.e IMAGE_DATA
+						callerHandler.obtainMessage(Resources.IMAGE_DATA, img_byte_data.length, device_index, img_byte_data).sendToTarget();
+
+					}
+					else
+					{
+						LogMsg("Normal message");
+						
+						String data = new String(byte_data, 0, byte_data.length);
+
+						// data contains <what:data> formate separate
+						// 'what' and 'data' from it
+						String[] data_values = data.split(":");
+
+						LogMsg("Data received from " + device.getName() + ": "
+								+ data_values[0] + "," + data_values[1]);
+
+						// Send the obtained bytes to the UI activity
+						// device_index tells the callerHandler from which
+						// device, the data has been received.
+						callerHandler.obtainMessage(
+								Integer.parseInt(data_values[0]), byte_data.length,
+								device_index, data_values[1]).sendToTarget();
+						
+					}
+					
+				//}
+
 				LogMsg("Terminating the reading Thread");
-				
+
 				reader_thread_count--;
 				LogMsg("Reader Thread Count:" + reader_thread_count);
-				
+
 				return;
 
 			}// end of run()
@@ -421,16 +415,15 @@ public class ConnectedDevice {
 	 * connection.
 	 */
 	public void disconnect() {
-		
-		if (socket != null)
-		{
+
+		if (socket != null) {
 			try {
 				LogMsg("***Closing the IO streams & socket and disconnecting.***");
-			
-				//close the streams
+
+				// close the streams
 				input_stream.close();
 				output_stream.close();
-				
+
 				socket.close();
 
 			} catch (IOException e) {

@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.TextView;
@@ -231,7 +232,8 @@ public class ProviderCameraActivity extends Activity{
 				}
 				// Unexpected messages
 				else {
-					LogMsg("Unexpected message received in this Hnadler.");
+					LogMsg("Unexpected message received in this Handler.");
+					LogMsg("msg.wht:" + msg.what + ", msg.obj:" + msg.obj);
 				}
 			}
 		};
@@ -242,6 +244,11 @@ public class ProviderCameraActivity extends Activity{
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 
+		//Intial setup
+				//Keep the screen on
+				//This flag will be cleared when this activity is destroyed
+				getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+				
 		// same layout is also used by SeekerCameraActivity
 		setContentView(R.layout.activity_camera);
 
@@ -283,6 +290,7 @@ public class ProviderCameraActivity extends Activity{
 
 					//stop sharing
 					stopSharingCamera();
+					
 					}
 				}
 			);
@@ -319,7 +327,7 @@ public class ProviderCameraActivity extends Activity{
 		//display the message
 		sharing_status.setText("Sharing the camera has been stopped.");
 		Toast.makeText(providerCameraActivityContext, "Notifying the " + connected_seeker_device.getDevice().getName(), Toast.LENGTH_SHORT).show();
-		
+	
 	}
 	
 	/**
@@ -327,8 +335,7 @@ public class ProviderCameraActivity extends Activity{
 	 */
 	@Override
 	public void onBackPressed() {
-		super.onBackPressed();
-		
+				
 		//notify the seeker about this
 		AlertDialog confirmOnBack = new AlertDialog.Builder(
 				providerCameraActivityContext)
@@ -369,6 +376,7 @@ public class ProviderCameraActivity extends Activity{
 						// display the dialog on the screen
 		confirmOnBack.show();
 		
+		super.onBackPressed();
 	}
 	
 	@Override

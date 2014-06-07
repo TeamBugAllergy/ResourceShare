@@ -20,6 +20,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.WindowManager;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -404,6 +405,11 @@ public class ProviderActivity extends Activity {
 		setContentView(R.layout.activity_provider);
 
 		// LogMsg("INSIDE:onCreate");
+		
+		//Intial setup
+				//Keep the screen on
+				//This flag will be cleared when this activity is destroyed
+				getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
 		// Context of this Activity used by inner classes
 		providerActivityContext = this;

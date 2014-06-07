@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.CompoundButton.OnCheckedChangeListener;
@@ -61,6 +62,11 @@ public class MainActivity extends Activity implements OnClickListener {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		//Intial setup
+		//Keep the screen on
+		//This flag will be cleared when this activity is destroyed
+		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		
 		// obtain a reference to BluetoothAdapter
 		ba = BluetoothAdapter.getDefaultAdapter();
 
@@ -86,6 +92,14 @@ public class MainActivity extends Activity implements OnClickListener {
 				seek_resource.setClickable(true);
 
 				LogMsg("Bluetooth was Switched on");
+				
+				//Below stmnts are used to set the visibility duration to infinity
+				Intent setVisibility = new Intent(BluetoothAdapter.
+					      ACTION_REQUEST_DISCOVERABLE);
+				//here 0 means infinity
+				setVisibility.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
+				startActivityForResult(setVisibility, 0);
+					      
 			} else {
 				// Show that bluetooth is currenlty switched off
 				bluetooth_switch.setChecked(false);
@@ -157,6 +171,14 @@ public class MainActivity extends Activity implements OnClickListener {
 				seek_resource.setClickable(true);
 
 				LogMsg("Bluetooth has been Switched on");
+				
+				//Below stmnts are used to set the visibility duration to infinity
+				Intent setVisibility = new Intent(BluetoothAdapter.
+					      ACTION_REQUEST_DISCOVERABLE);
+				//here 0 means infinity
+				setVisibility.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
+				startActivityForResult(setVisibility, 0);
+				
 			}
 			// if User declined to Switch on the bluletooth
 			else {
@@ -253,6 +275,14 @@ public class MainActivity extends Activity implements OnClickListener {
 				
 	}
 
+	@Override
+	protected void onDestroy() {
+		super.onDestroy();
+		
+		//clear the flag, so that screen switches off afterwards
+		getWindow().clearFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+	}
+	
 	/**
 	 * used to make toasts
 	 * 

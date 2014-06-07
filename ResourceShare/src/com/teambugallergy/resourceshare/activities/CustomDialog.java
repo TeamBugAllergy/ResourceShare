@@ -8,6 +8,7 @@ import android.content.Context;
 import android.os.Bundle;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -69,6 +70,11 @@ public class CustomDialog extends Dialog implements OnClickListener{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.dialog_layout);
 		
+		//Intial setup
+				//Keep the screen on
+				//This flag will be cleared when this activity is destroyed
+				getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+				
 		//set the title
 		setTitle(title);
 		
