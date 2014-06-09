@@ -1,7 +1,9 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent"
+    android:background="@drawable/background"
+    android:gravity="center" >
 
      <ToggleButton
         android:id="@+id/bluetooth_switch"
@@ -10,8 +12,15 @@
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="16dp"
+         android:background="@drawable/button"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp"
+        android:paddingBottom="25dp"
+        android:paddingTop="25dp"
+        
         android:textOff="@string/bluetooth_off"
-        android:textOn="@string/bluetooth_on" />
+        android:textOn="@string/bluetooth_on"
+         />
     
     <Button
         android:id="@+id/provide_resource"
@@ -19,6 +28,11 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/bluetooth_switch"
         android:layout_centerHorizontal="true"
+        android:background="@drawable/button"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp"
+        android:paddingBottom="25dp"
+        android:paddingTop="25dp"
         android:text="@string/provide_resource" />
 
     <Button
@@ -27,6 +41,12 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/provide_resource"
         android:layout_centerHorizontal="true"
-        android:text="@string/seek_resource" />
+        android:text="@string/seek_resource" 
+        android:background="@drawable/button"
+        android:paddingLeft="25dp"
+        android:paddingRight="25dp"
+        android:paddingBottom="25dp"
+        android:paddingTop="25dp"/>
+
 
 </RelativeLayout>
