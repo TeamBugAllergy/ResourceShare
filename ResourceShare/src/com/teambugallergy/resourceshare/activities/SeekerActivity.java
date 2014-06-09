@@ -42,7 +42,7 @@ import android.widget.ListView;
  * -------------------------------------- <br/>
  * </i> 06-04-2014
  * 
- * @author Adiga@TeamBugAllergy
+ * @author TeamBugAllergy
  * 
  */
 public class SeekerActivity extends Activity implements OnClickListener,

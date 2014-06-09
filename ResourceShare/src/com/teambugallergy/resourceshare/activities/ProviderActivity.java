@@ -39,7 +39,7 @@ import android.widget.Toast;
  * 
  * 06-04-2014
  * 
- * @author Adiga@TeamBugAllergy
+ * @author TeamBugAllergy
  * 
  */
 public class ProviderActivity extends Activity {

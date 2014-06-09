@@ -29,7 +29,7 @@ import android.widget.Toast;
  * seekerAccelerometerActivityHandler.*** Display appropriate messages to user
  * based on the messages received from potential_provider_list.
  * 
- * @author Adiga@TeamBugAllergy 07-05-2014
+ * @author TeamBugAllergy 07-05-2014
  */
 public class SeekerAccelerometerActivity extends Activity {
 

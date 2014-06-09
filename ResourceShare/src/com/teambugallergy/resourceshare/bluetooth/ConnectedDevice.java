@@ -1,6 +1,5 @@
 package com.teambugallergy.resourceshare.bluetooth;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,7 +24,7 @@ import android.util.Log;
  * 
  * 02-04-2014
  * 
- * @author Adiga@TeamBugAllergy
+ * @author TeamBugAllergy
  */
 public class ConnectedDevice {
 
@@ -288,7 +287,7 @@ public class ConnectedDevice {
 
 					try {
 						// buffer store for the stream
-						byte[] buffer_data_received = new byte[1024]; 
+						byte[] buffer_data_received = new byte[1024 * 4]; 
 						
 						//input_stream.reset();
 						
@@ -310,7 +309,7 @@ public class ConnectedDevice {
 						{
 							LogMsg("last 3 bytes:" + buffer_data_received[num_bytes_read-3] +","+ buffer_data_received[num_bytes_read-2] +","+ buffer_data_received[num_bytes_read-1]);
 							
-							LogMsg(total_bytes_read + " bytes of data received completely from "
+							LogMsg(total_bytes_read + " bytes of data  received completely from "
 									+ device.getName());
 							
 							//terminate the thread

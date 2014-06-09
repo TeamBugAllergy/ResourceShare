@@ -1,5 +1,6 @@
 package com.teambugallergy.resourceshare.resources;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.http.util.ByteArrayBuffer;
@@ -132,16 +133,19 @@ public class MyCamera {
 		} else
 			params.setPictureFormat(PixelFormat.RGB_565);
 
+		//TODO: Comment these lines to decrease the image size and clarity
 		// Now the supported picture sizes.
 		List<Size> sizes = params.getSupportedPictureSizes();
 		Camera.Size size = sizes.get(sizes.size() - 1);
 		params.setPictureSize(size.width, size.height);
 
+		LogMsg("IMAGE Size: " + size.width + "," + size.height);
+		
 		// Set the brightness to auto.
 		params.setWhiteBalance(Camera.Parameters.WHITE_BALANCE_AUTO);
 
 		// Set the flash mode to auto.
-		params.setFlashMode(Camera.Parameters.FLASH_MODE_ON);
+		params.setFlashMode(Camera.Parameters.FLASH_MODE_AUTO);
 
 		// Set the scene mode to portrait.
 		params.setSceneMode(Camera.Parameters.SCENE_MODE_PORTRAIT);
@@ -195,7 +199,7 @@ public class MyCamera {
 	 * This function is to click a Picture. It sets callback handler for
 	 * processing of clicked image. You have to call the OpenCamera() before
 	 * calling this method The Picture that is captured is stored in the
-	 * directory defined by getExternalStorageDirectory with the name
+	 * directory defined by getExternalStorageDirectory with the name 
 	 * Teambugallergy.jpg
 	 * 
 	 * @return <i>true</i> For successfully captured and stored. <i>false</i>
@@ -203,6 +207,8 @@ public class MyCamera {
 	 */
 	public Boolean takePicture() {
 
+		LogMsg("inside takePicture()");
+		
 		jpegCallBack = new Camera.PictureCallback() {
 
 			// CallBack method to process the taken picture.
@@ -231,12 +237,22 @@ public class MyCamera {
 						.sendData(image_data);
 				LogMsg("Provider is sending the image data bytes directly to " + ProviderCameraActivity.getConnectedSeekerDevice().getDevice().getName());
 
+				LogMsg("Image Data, first 3 bytes:"+ image_data[0] +","+ image_data[1] +","+ image_data[2] );
+				
+
+				//wait for 1 sec and then send this message
+				try {
+					Thread.sleep(1000);
+				} catch (InterruptedException e) 
+				{
+					LogMsg("Error: Sleeping interrupted- " + e);
+				}
+				
+				LogMsg("notifying the provider device by sending IMAGE_DATA");
 				// notify the potential provider about this
 				callerHandler.obtainMessage(Resources.IMAGE_DATA)
 						.sendToTarget();
-				LogMsg("notifying the provider device by sending IMAGE_DATA");
 				
-				LogMsg("Image Data, first 3 bytes:"+ image_data[0] +","+ image_data[1] +","+ image_data[2] );
 			}
 
 		};
@@ -266,6 +282,6 @@ public class MyCamera {
 	}
 
 	private static void LogMsg(String msg) {
-		Log.d("Camera", msg);
+		Log.d("MyCamera", msg);
 	}
 }

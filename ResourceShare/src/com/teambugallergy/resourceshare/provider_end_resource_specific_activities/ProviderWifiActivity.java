@@ -22,6 +22,16 @@ import com.teambugallergy.resourceshare.constants.Resources;
 import com.teambugallergy.resourceshare.resources.MyWifi;
 import com.teambugallergy.resourceshare.resources.Resource;
 
+/**
+ * This Activity is invoked by ProviderActivity WHENEVER Seeker sends 'Resource
+ * Access Request' message. First try to Acquire and lock the Requested
+ * Resource. Send the result of this process to Seeker Device. This activity
+ * will have buttons to control the sharing the Wifi.
+ * 
+ * @author TeamBugAllergy
+ *  06-05-2014
+ */
+
 public class ProviderWifiActivity extends Activity{
 
 

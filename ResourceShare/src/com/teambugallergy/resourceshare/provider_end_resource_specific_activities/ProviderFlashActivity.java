@@ -28,7 +28,7 @@ import android.widget.Toast;
  * Resource. Send the result of this process to Seeker Device. This activity
  * will have buttons to control the sharing the Flash.
  * 
- * @author Adiga@TeamBugAllergy
+ * @author TeamBugAllergy
  *  30-04-2014
  */
 public class ProviderFlashActivity extends Activity {

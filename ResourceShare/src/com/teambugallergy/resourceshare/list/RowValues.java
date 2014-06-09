@@ -6,7 +6,7 @@ package com.teambugallergy.resourceshare.list;
  * The order of String values should be same as the order of the views inside a Row.
  * 
  * @since 04-04-2014
- * @author Adiga@TeamBugAllergy
+ * @author TeamBugAllergy
  * 
  */
 public class RowValues {

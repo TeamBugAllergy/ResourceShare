@@ -23,6 +23,17 @@ import com.teambugallergy.resourceshare.activities.ResourceListActivity;
 import com.teambugallergy.resourceshare.bluetooth.ConnectedDevice;
 import com.teambugallergy.resourceshare.constants.Resources;
 
+/**
+ * This Activity is invoked by ResoueceListActivity <i>AFTER BELOW
+ * PROCESSES</i>. onClick of 'Access Resource' button, will send a 'Resource
+ * Access Request' message to Provider devices and start the
+ * SeekerWifiActivity. ***Set the callerHandler for objects in
+ * potential_provider_list as Handler of this class, i.e
+ * seekerWifiActivityHandler.*** Display appropriate messages to user based on
+ * the messages received from potential_provider_list.
+ * 
+ * @author TeamBugAllergy 06-05-2014
+ */
 public class SeekerWifiActivity extends Activity {
 
 	/**

@@ -28,7 +28,7 @@ import android.widget.Toast;
  * user selects a Resource and clicks 'Request' Button, All the devices in the
  * connected_device_list[] will be sent the ResourceId and waits for the result.
  * 
- * @author Adiga@TeamBugAllergy
+ * @author TeamBugAllergy
  *  22-04-2014
  */
 public class ResourceListActivity extends Activity implements OnClickListener {

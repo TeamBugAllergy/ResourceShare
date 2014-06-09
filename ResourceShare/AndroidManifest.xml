@@ -28,7 +28,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.teambugallergy.resourceshare.activities.MainActivity"
-            android:label="@string/app_name" >
+            android:label="@string/app_name"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -38,53 +39,64 @@
         
         <activity 
             android:name=".activities.SeekerActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
         </activity>
         
         <activity 
             android:name=".activities.ProviderActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
         </activity>
         
         <activity 
             android:name=".activities.ResourceListActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
         </activity>
         
         <activity 
             android:name=".seeker_end_resource_specific_activities.SeekerFlashActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
         </activity>
         <activity 
             android:name=".provider_end_resource_specific_activities.ProviderFlashActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
         </activity>
         
          <activity 
             android:name=".seeker_end_resource_specific_activities.SeekerCameraActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
         </activity>
         <activity 
             android:name=".provider_end_resource_specific_activities.ProviderCameraActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
         </activity>
         
         <activity 
             android:name=".provider_end_resource_specific_activities.ProviderWifiActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
         </activity>
         <activity 
             android:name=".seeker_end_resource_specific_activities.SeekerWifiActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
         </activity>
         
         <activity 
             android:name=".provider_end_resource_specific_activities.ProviderAccelerometerActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
         </activity>
         <activity 
             android:name=".seeker_end_resource_specific_activities.SeekerAccelerometerActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
         </activity>
         
     </application>

@@ -20,7 +20,7 @@ import android.util.Log;
  * 
  * :02-04-2014
  * 
- * @author Adiga@TeamBugAllergy
+ * @author TeamBugAllergy
  */
 public class ServerThread extends Thread {
 

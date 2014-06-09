@@ -34,10 +34,10 @@ import com.teambugallergy.resourceshare.constants.Resources;
  * Access Request' message to Provider devices and start the
  * SeekerCameraActivity. ***Set the callerHandler for objects in
  * potential_provider_list as Handler of this class, i.e
- * seekerFlashActivityHandler.*** Display appropriate messages to user based on
+ * seekerCameraActivityHandler.*** Display appropriate messages to user based on
  * the messages received from potential_provider_list.
  * 
- * @author Adiga@TeamBugAllergy 06-05-2014
+ * @author TeamBugAllergy 06-05-2014
  */
 public class SeekerCameraActivity extends Activity {
 
@@ -165,15 +165,21 @@ public class SeekerCameraActivity extends Activity {
 					Bitmap userImage = BitmapFactory.decodeByteArray(data, 0,
 							data.length);
 
-					LogMsg("Image data length: " + data.length);
+					LogMsg("Image  data length: " + data.length);
 
 					//if bitmap is decoded successfully
 					if (userImage != null) { 
 						// set file out stream
 						FileOutputStream out = new FileOutputStream(destination);
+						
 						// set compress format quality and stream
-						userImage.compress(Bitmap.CompressFormat.JPEG, 30, out);
+						userImage.compress(Bitmap.CompressFormat.JPEG, 40, out);
 
+						//TODO: If you do not want to compress the image,so make it 100 instead of 30
+						// set compress format quality and stream
+						//userImage.compress(Bitmap.CompressFormat.JPEG, 100, out);
+
+						
 						LogMsg("Saved the image");
 
 						Toast.makeText(seekerCameraActivityContext,

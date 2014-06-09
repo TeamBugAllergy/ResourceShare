@@ -10,7 +10,7 @@ package com.teambugallergy.resourceshare.constants;
  * -------------------------------------- <br/>
  * </i>
  * 
- * @author Adiga@TeamBugAllergy
+ * @author TeamBugAllergy
  *  22-04-2014
  */
 public interface Resources {

@@ -27,12 +27,12 @@ import android.widget.ToggleButton;
  * This Activity is invoked by ResoueceListActivity <i>AFTER BELOW
  * PROCESSES</i>. onClick of 'Access Resource' button, will send a 'Resource
  * Access Request' message to Provider devices and start the
- * SeekerFlashActivity. ***Set the callerHandler for objects in
+ * SeekerFlashActivity. Set the callerHandler for objects in
  * potential_provider_list as Handler of this class, i.e
- * seekerFlashActivityHandler.*** Display appropriate messages to user based on
+ * seekerFlashActivityHandler. Display appropriate messages to user based on
  * the messages received from potential_provider_list.
  * 
- * @author Adiga@TeamBugAllergy
+ * @author TeamBugAllergy
  *  30-04-2014
  */
 public class SeekerFlashActivity extends Activity {
