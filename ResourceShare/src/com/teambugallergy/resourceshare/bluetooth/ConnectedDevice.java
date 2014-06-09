@@ -329,6 +329,19 @@ public class ConnectedDevice {
 					//use the complete data stored in big buffer
 					byte[] complete_bytes_received = complete_data_received.toByteArray();
 					
+					//length of the actual data bytes (without delimeter of 3 bytes)
+					int data_length = complete_bytes_received.length - 3;
+					if(data_length < 0)
+					{
+						//Stop processing the data (errorneous data) and terminate the thread
+						LogMsg("ERROR: Data of size " + data_length + "bytes have been received.");
+						LogMsg("Therefore closing the reading thread");
+						
+						//TODO:Send STOP_SHARING message to the callerHandler (Ask the team)
+						return;
+						
+					}
+					
 					//remove the last three bytes of delimeter EOD
 					ByteArrayBuffer tmp_buffer = new ByteArrayBuffer(complete_bytes_received.length - 3);
 					tmp_buffer.append(complete_bytes_received, 0, complete_bytes_received.length - 3);
