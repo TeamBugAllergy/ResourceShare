@@ -341,6 +341,10 @@ public class SeekerAccelerometerActivity extends Activity {
 					{
 						//message will have 'SHARING_CONTROL:STOP_SHARING'.
 						potential_provider_list[i].sendData( (Resources.SHARING_CONTROL + ":" + Resources.STOP_SHARING).getBytes() );
+					
+						//wait for future messages from the provider device
+						potential_provider_list[i].receiveData();
+						LogMsg("Waiting for messages from the provider");
 						
 					}
 				}

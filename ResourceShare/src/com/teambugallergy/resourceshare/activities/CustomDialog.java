@@ -2,7 +2,9 @@ package com.teambugallergy.resourceshare.activities;
 
 import com.teambugallergy.resourceshare.R;
 
+import android.app.Activity;
 import android.app.Dialog;
+import android.util.Log;
 import android.view.View.OnClickListener;
 import android.content.Context;
 import android.os.Bundle;
@@ -35,6 +37,11 @@ public class CustomDialog extends Dialog implements OnClickListener{
 	String dialog;
 	
 	/**
+	 * Context of the caller activity.
+	 */
+	Context callerContext;
+	
+	/**
 	 * TextView to hold the dialog.
 	 */
 	private TextView message;
@@ -56,7 +63,10 @@ public class CustomDialog extends Dialog implements OnClickListener{
 	 */
 	public CustomDialog(Context context, String title, String dialog) {
 		super(context);
-				
+		
+		//save the context
+		callerContext = context;
+		
 		//save the title
 		this.title = title;
 		
@@ -165,4 +175,24 @@ public class CustomDialog extends Dialog implements OnClickListener{
 		//Notify that event has been handled here only.
 		return true;
 	}
+	
+	/**
+	 * This definition finishes the activity and returns to the MainActivity.
+	 */
+	@Override
+	public void onBackPressed() {
+		
+		 LogMsg("INSIDE:onBackPressed");
+
+		
+				LogMsg("Finishing the ProviderActivity");
+				((Activity) callerContext).finish();
+				
+		super.onBackPressed();
+	}
+
+	private static void LogMsg(String msg) {
+		Log.d("CustomDialog", msg);
+	}
+
 }

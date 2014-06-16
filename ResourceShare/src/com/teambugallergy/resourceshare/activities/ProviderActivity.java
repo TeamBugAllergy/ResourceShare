@@ -274,9 +274,7 @@ public class ProviderActivity extends Activity {
 
 											// send data in the form 'what:data'
 											connected_device
-													.sendData((Resources.REQUEST_STATUS
-															+ ":" + Resources.REQUEST_ACCEPTED)
-															.getBytes());
+													.sendData((Resources.REQUEST_STATUS	+ ":" + Resources.REQUEST_ACCEPTED)	.getBytes());
 
 											LogMsg("Sending message to Seeker:'Resource is available and accepted to share.'");
 											dialog.dismiss();
@@ -333,6 +331,11 @@ public class ProviderActivity extends Activity {
 											// requests again.
 											LogMsg("Sending message to Seeker:'Resource is available but rejected to share.'");
 											dialog.dismiss();
+											
+											//Finish this activity and go back to MainActivity
+											((Activity) providerActivityContext).finish();
+											LogMsg("Finishing the ProviderActivity");
+											
 
 										}
 									}).create();
@@ -431,6 +434,28 @@ public class ProviderActivity extends Activity {
 		started_resource_activity = false;
 	}
 
+	@Override
+	protected void onStart() {
+		super.onStart();
+
+		// LogMsg("INSIDE:onStart");
+
+		seeker_device = new RemoteSeekerDevice(providerActivityHandler);
+		startListening();
+	}
+	
+	/*Testing
+	@Override
+	protected void onResume() {
+		super.onResume();
+
+		// LogMsg("INSIDE:onResume");
+
+		seeker_device = new RemoteSeekerDevice(providerActivityHandler);
+		startListening();
+	}
+*/
+
 	/**
 	 * Starts listening for connection requests from seeker devices and
 	 * displays a dialog with progress bar.
@@ -477,16 +502,34 @@ public class ProviderActivity extends Activity {
 		return connected_device;
 	}
 
+	/**
+	 * This definition finishes the activity and returns to the MainActivity.
+	 */
 	@Override
-	protected void onResume() {
-		super.onResume();
+	public void onBackPressed() {
+		
+		 LogMsg("INSIDE:onBackPressed");
 
-		// LogMsg("INSIDE:onResume");
+				// If this Activity is being stopped without going to Resource Specific
+				// Activity,
+				// Then DISCONNECT the connection to allow future connections
+				if (started_resource_activity == false) {
+					// If user has not opened Resource Specific Activity successfully,
+					// then stop the reading thread.
+					if (connected_device != null) {
 
-		seeker_device = new RemoteSeekerDevice(providerActivityHandler);
-		startListening();
+						// terminate the connection
+						connected_device.disconnect();
+						LogMsg("Disconnecting...");
+					}
+				}
+		
+				LogMsg("Finishing the ProviderActivity");
+				finish();
+				
+		super.onBackPressed();
 	}
-
+	
 	/**
 	 * Stops listening to connection requests from seeker devices
 	 */

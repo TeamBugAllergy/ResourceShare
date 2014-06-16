@@ -442,7 +442,9 @@ public class SeekerCameraActivity extends Activity {
 							.sendData((Resources.SHARING_CONTROL + ":" + Resources.STOP_SHARING)
 									.getBytes());
 
-					//TODO:BB- not waiting for any replys from other device
+					//wait for future messages from the provider device
+					potential_provider_list[i].receiveData();
+					LogMsg("Waiting for messages from the provider");
 					
 				}
 				

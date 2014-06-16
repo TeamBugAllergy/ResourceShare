@@ -302,8 +302,9 @@ public class ProviderAccelerometerActivity extends Activity {
 			//message "SHARING_STATUS:SHARING_STOPPED"
 			connected_seeker_device.sendData( (Resources.SHARING_STATUS + ":" + Resources.SHARING_STOPPED).getBytes() );
 			
-			//display the message
-			//sharing_status.setText("Sharing the Accelerometer has been stopped.");
+			//wait for next message from the seeker
+			connected_seeker_device.receiveData();
+			LogMsg("Waiting for messages from the seeker");
 		}
 		
 		/**
@@ -313,46 +314,8 @@ public class ProviderAccelerometerActivity extends Activity {
 		public void onBackPressed() {
 			super.onBackPressed();
 			
-			//notify the seeker about this
-			AlertDialog confirmOnBack = new AlertDialog.Builder(
-					providerAccelerometerActivityContext)
-					// set message, title, and icon
-					.setTitle("Going back.")
-					.setMessage( "Sharing has been completed." )
-
-					.setPositiveButton("Ok",
-							new DialogInterface.OnClickListener() {
-
-								public void onClick(DialogInterface dialog,
-										int whichButton) {
-									
-									stopSharingAccelerometer();
-									// stop the reading thread
-									if (connected_seeker_device != null) {
-										
-										// terminate the connection
-										connected_seeker_device.disconnect();
-										LogMsg("Disconnected from the " + connected_seeker_device.getDevice().getName());
-										
-									}
-									
-									//release the Accelerometer
-									if(accelerometer != null)
-									{
-										//release the Accelerometer
-										accelerometer.releaseAccelerometer();
-									}
-									
-									LogMsg("User has confirmed.");
-									dialog.dismiss();
-									
-									((Activity) providerAccelerometerActivityContext).finish();
-									
-							}}).create();
-
-							// display the dialog on the screen
-			confirmOnBack.show();
-			
+			//stop sharing the flash and finish the activity
+			stopSharingAccelerometer();			
 		}
 		
 		@Override
